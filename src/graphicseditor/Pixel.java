@@ -1,19 +1,19 @@
 package graphicseditor;
 
-public class Pixel {
-    private int red;
-    private int green;
-    private int blue;
+import java.awt.Color;
 
-    public Pixel(int red, int green, int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+public class Pixel {
+    Color value;
+
+    public Pixel(Color value) {
+        this.value = value;
     }
 
-    public void setRBG(int red, int green, int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+    public void setRGB(Color value) {
+        this.value = value;
+    }
+
+    public Color getRGB() {
+        return value;
     }
 }

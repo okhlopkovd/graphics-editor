@@ -4,11 +4,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+import javax.swing.JButton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 
-public class Editor extends JFrame implements ActionListener{
+public class Editor implements ActionListener{
     private JFrame window;
 
     public Editor(int windowWidth, int windowHeight) {
@@ -55,30 +58,69 @@ public class Editor extends JFrame implements ActionListener{
         editMenu.add(editMenuItem2);
         editMenu.add(editMenuItem3);
 
-        // instruments menu
+        // tools menu
 
-        JMenu instrumentsMenu = new JMenu("Instruments");
+        JMenu toolsMenu = new JMenu("Tools");
 
-        JMenuItem instrumentsMenuItem1 = new JMenuItem("Pencil");
-        JMenuItem instrumentsMenuItem2 = new JMenuItem("Brush");
-        JMenuItem instrumentsMenuItem3 = new JMenuItem("Rubber");
-        JMenuItem instrumentsMenuItem4 = new JMenuItem("Magnifier");
-        JMenuItem instrumentsMenuItem5 = new JMenuItem("Line");
-        JMenuItem instrumentsMenuItem6 = new JMenuItem("Rectangle");
-        JMenuItem instrumentsMenuItem7 = new JMenuItem("Circle");
+        JMenuItem toolsMenuItem1 = new JMenuItem("Pencil");
+        JMenuItem toolsMenuItem2 = new JMenuItem("Brush");
+        JMenuItem toolsMenuItem3 = new JMenuItem("Rubber");
+        JMenuItem toolsMenuItem4 = new JMenuItem("Magnifier");
+        JMenuItem toolsMenuItem5 = new JMenuItem("Line");
+        JMenuItem toolsMenuItem6 = new JMenuItem("Rectangle");
+        JMenuItem toolsMenuItem7 = new JMenuItem("Circle");
 
-        instrumentsMenu.add(instrumentsMenuItem1);
-        instrumentsMenu.add(instrumentsMenuItem2);
-        instrumentsMenu.add(instrumentsMenuItem3);
-        instrumentsMenu.add(instrumentsMenuItem4);
-        instrumentsMenu.add(instrumentsMenuItem5);
-        instrumentsMenu.add(instrumentsMenuItem6);
-        instrumentsMenu.add(instrumentsMenuItem7);
+        toolsMenu.add(toolsMenuItem1);
+        toolsMenu.add(toolsMenuItem2);
+        toolsMenu.add(toolsMenuItem3);
+        toolsMenu.add(toolsMenuItem4);
+        toolsMenu.add(toolsMenuItem5);
+        toolsMenu.add(toolsMenuItem6);
+        toolsMenu.add(toolsMenuItem7);
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
-        menuBar.add(instrumentsMenu);
+        menuBar.add(toolsMenu);
 
+        // toolbar
+
+        JToolBar toolbar = new JToolBar();
+
+        // creating buttons for the toolbar
+
+        JButton newButton = new JButton("New");
+        JButton openButton = new JButton("Open");
+        JButton saveButton = new JButton("Save");
+
+        JButton cutButton = new JButton("Cut");
+        JButton copyButton = new JButton("Copy");
+        JButton pasteButton = new JButton("Paste");
+
+        JButton pencilButton = new JButton("Pencil");
+        JButton brushButton = new JButton("Brush");
+        JButton rubberButton = new JButton("Rubber");
+        JButton magnifierButton = new JButton("Magnifier");
+        JButton lineButton = new JButton("Line");
+        JButton rectangleButton = new JButton("Rectangle");
+        JButton circleButton = new JButton("Circle");
+
+        toolbar.add(newButton);
+        toolbar.add(openButton);
+        toolbar.add(saveButton);
+
+        toolbar.add(cutButton);
+        toolbar.add(copyButton);
+        toolbar.add(pasteButton);
+
+        toolbar.add(pencilButton);
+        toolbar.add(brushButton);
+        toolbar.add(rubberButton);
+        toolbar.add(magnifierButton);
+        toolbar.add(lineButton);
+        toolbar.add(rectangleButton);
+        toolbar.add(circleButton);
+
+        window.add(toolbar, BorderLayout.NORTH);
         window.setJMenuBar(menuBar);
         window.setVisible(true);
     }

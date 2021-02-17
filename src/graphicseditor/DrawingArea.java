@@ -15,6 +15,11 @@ import java.awt.event.MouseMotionAdapter;
 
 import graphicseditor.Tool;
 import graphicseditor.Pencil;
+import graphicseditor.Brush;
+import graphicseditor.Rubber;
+
+import graphicseditor.Shape;
+import graphicseditor.Line;
 
 public class DrawingArea extends JComponent{
     private Image image;
@@ -23,29 +28,40 @@ public class DrawingArea extends JComponent{
     private int curX, curY;
     private int oldX, oldY;
 
+    private boolean shapeMode = false;
+    private Shape currentShape;
     private Tool currentTool = new Pencil();
 
     public DrawingArea() {
-        setDoubleBuffered(false);
-
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                oldX = e.getX();
-                oldY = e.getY();
+                if(!shapeMode) {
+                    oldX = e.getX();
+                    oldY = e.getY();
+                }
+            }
+
+            public void mouseClicked(MouseEvent e) {
+                if(shapeMode) {
+                    currentShape.paintShape(graphics, e.getX(), e.getY());
+                    repaint();
+                }
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                curX = e.getX();
-                curY = e.getY();
+                if (!shapeMode) {
+                    curX = e.getX();
+                    curY = e.getY();
 
-                if (graphics != null) {
-                    currentTool.paint(graphics, oldX, oldY, curX, curY);
-                    repaint();
+                    if (graphics != null) {
+                        currentTool.paint(graphics, oldX, oldY, curX, curY);
+                        repaint();
 
-                    oldX = curX;
-                    oldY = curY;
+                        oldX = curX;
+                        oldY = curY;
+                    }
                 }
             }
         });
@@ -74,13 +90,31 @@ public class DrawingArea extends JComponent{
 
     public void brush() {
         currentTool = new Brush(10);
+        shapeMode = false;
     }
 
     public void pen() {
         currentTool = new Pencil();
+        shapeMode = false;
     }
 
     public void rubber() {
         currentTool = new Rubber(10);
+        shapeMode = false;
+    }
+
+    public void line() {
+        shapeMode = true;
+        currentShape = new Line();
+    }
+
+    public void rectangle() {
+        shapeMode = true;
+        currentShape = new Rectangle();
+    }
+
+    public void circle() {
+        shapeMode = true;
+        currentShape = new Circle();
     }
 }

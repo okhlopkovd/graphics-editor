@@ -125,6 +125,9 @@ public class Editor implements ActionListener{
         pencilButton.addActionListener(e -> drawArea.pen());
         brushButton.addActionListener(e -> drawArea.brush());
         rubberButton.addActionListener(e -> drawArea.rubber());
+        lineButton.addActionListener(e -> drawArea.line());
+        rectangleButton.addActionListener(e -> drawArea.rectangle());
+        circleButton.addActionListener(e -> drawArea.circle());
 
         toolbar.add(newButton);
         toolbar.add(openButton);

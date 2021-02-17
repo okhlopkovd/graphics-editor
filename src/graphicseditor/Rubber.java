@@ -17,7 +17,7 @@ public class Rubber implements Tool{
 
     public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY) {
         g.setStroke(rubberStroke);
-        g.setColor(new Color(255, 255, 255));
+        g.setColor(Color.white);
         g.drawLine(oldX, oldY, curX, curY);
     }
 }

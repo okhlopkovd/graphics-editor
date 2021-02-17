@@ -9,7 +9,7 @@ public class Brush implements Tool{
     private int size;
     private BasicStroke brushStroke;
 
-    public Brush(Graphics2D g, int size) {
+    public Brush(int size) {
         this.size = size;
         brushStroke = new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     }

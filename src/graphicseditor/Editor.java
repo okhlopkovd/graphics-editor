@@ -10,9 +10,21 @@ import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.awt.Container;
+
+import graphicseditor.DrawingArea;
 
 public class Editor implements ActionListener{
     private JFrame window;
+    private DrawingArea drawArea;
+
+    JButton pencilButton;
+    JButton brushButton;
+    JButton rubberButton;
+    JButton magnifierButton;
+    JButton lineButton;
+    JButton rectangleButton;
+    JButton circleButton;
 
     public Editor(int windowWidth, int windowHeight) {
         // creating a window
@@ -22,6 +34,12 @@ public class Editor implements ActionListener{
         window.setTitle("Graphics Editor");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(windowWidth, windowHeight);
+
+        // creating a class for drawing area
+
+        DrawingArea drawArea = new DrawingArea();
+        Container content = window.getContentPane();
+        content.add(drawArea, BorderLayout.CENTER);
 
         // creating a menu
 
@@ -96,13 +114,17 @@ public class Editor implements ActionListener{
         JButton copyButton = new JButton("Copy");
         JButton pasteButton = new JButton("Paste");
 
-        JButton pencilButton = new JButton("Pencil");
-        JButton brushButton = new JButton("Brush");
-        JButton rubberButton = new JButton("Rubber");
-        JButton magnifierButton = new JButton("Magnifier");
-        JButton lineButton = new JButton("Line");
-        JButton rectangleButton = new JButton("Rectangle");
-        JButton circleButton = new JButton("Circle");
+        pencilButton = new JButton("Pencil");
+        brushButton = new JButton("Brush");
+        rubberButton = new JButton("Rubber");
+        magnifierButton = new JButton("Magnifier");
+        lineButton = new JButton("Line");
+        rectangleButton = new JButton("Rectangle");
+        circleButton = new JButton("Circle");
+
+        pencilButton.addActionListener(e -> drawArea.pen());
+        brushButton.addActionListener(e -> drawArea.brush());
+        rubberButton.addActionListener(e -> drawArea.rubber());
 
         toolbar.add(newButton);
         toolbar.add(openButton);

@@ -29,8 +29,10 @@ public class DrawingArea extends JComponent{
     private int oldX, oldY;
 
     private boolean shapeMode = false;
+
     private Shape currentShape;
     private Tool currentTool = new Pencil();
+    private Color currentColor = Color.pink;
 
     public DrawingArea() {
         addMouseListener(new MouseAdapter() {
@@ -43,7 +45,7 @@ public class DrawingArea extends JComponent{
 
             public void mouseClicked(MouseEvent e) {
                 if(shapeMode) {
-                    currentShape.paintShape(graphics, e.getX(), e.getY());
+                    currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
                     repaint();
                 }
             }
@@ -56,7 +58,7 @@ public class DrawingArea extends JComponent{
                     curY = e.getY();
 
                     if (graphics != null) {
-                        currentTool.paint(graphics, oldX, oldY, curX, curY);
+                        currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor);
                         repaint();
 
                         oldX = curX;

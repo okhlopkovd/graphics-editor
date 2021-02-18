@@ -12,7 +12,7 @@ public class Line implements Shape{
     private int x = 0;
     private int y = 0;
 
-    public void paintShape(Graphics2D g, int x, int y) {
+    public void paintShape(Graphics2D g, int x, int y, Color color) {
         if(clicks == 0) {
             this.x = x;
             this.y = y;
@@ -20,7 +20,7 @@ public class Line implements Shape{
             clicks++;
         }
         else {
-            g.setColor(Color.black);
+            g.setColor(color);
             g.setStroke(new BasicStroke(10));
             g.drawLine(this.x, this.y, x, y);
             clicks = 0;

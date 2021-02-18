@@ -15,8 +15,8 @@ public class Brush implements Tool{
         brushStroke = new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     }
 
-    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY) {
-        g.setColor(Color.black);
+    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color) {
+        g.setColor(color);
         g.setStroke(brushStroke);
         g.drawLine(oldX, oldY, curX, curY);
     }

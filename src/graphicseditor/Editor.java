@@ -1,16 +1,21 @@
 package graphicseditor;
 
+import java.awt.FileDialog;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.Container;
+
+import java.io.File;
 
 import graphicseditor.DrawingArea;
 
@@ -26,6 +31,20 @@ public class Editor implements ActionListener{
     JButton rectangleButton;
     JButton circleButton;
 
+    JMenuItem colorsMenuItem1;
+    JMenuItem colorsMenuItem2;
+    JMenuItem colorsMenuItem3;
+    JMenuItem colorsMenuItem4;
+    JMenuItem colorsMenuItem5;
+    JMenuItem colorsMenuItem6;
+    JMenuItem colorsMenuItem7;
+
+    JMenuItem fileMenuItem1;
+    JMenuItem fileMenuItem2;
+    JMenuItem fileMenuItem3;
+    JMenuItem fileMenuItem4;
+
+
     public Editor(int windowWidth, int windowHeight) {
         // creating a window
 
@@ -37,7 +56,7 @@ public class Editor implements ActionListener{
 
         // creating a class for drawing area
 
-        DrawingArea drawArea = new DrawingArea();
+        drawArea = new DrawingArea();
         Container content = window.getContentPane();
         content.add(drawArea, BorderLayout.CENTER);
 
@@ -49,10 +68,10 @@ public class Editor implements ActionListener{
 
         JMenu fileMenu = new JMenu("File");
 
-        JMenuItem fileMenuItem1 = new JMenuItem("New");
-        JMenuItem fileMenuItem2 = new JMenuItem("Open");
-        JMenuItem fileMenuItem3 = new JMenuItem("Save");
-        JMenuItem fileMenuItem4 = new JMenuItem("Close");
+        fileMenuItem1 = new JMenuItem("New");
+        fileMenuItem2 = new JMenuItem("Open");
+        fileMenuItem3 = new JMenuItem("Save");
+        fileMenuItem4 = new JMenuItem("Close");
 
         fileMenuItem1.addActionListener(this);
         fileMenuItem2.addActionListener(this);
@@ -96,9 +115,38 @@ public class Editor implements ActionListener{
         toolsMenu.add(toolsMenuItem6);
         toolsMenu.add(toolsMenuItem7);
 
+        // colors menu
+
+        JMenu colorsMenu = new JMenu("Colors");
+
+        colorsMenuItem1 = new JMenuItem("White");
+        colorsMenuItem2 = new JMenuItem("Black");
+        colorsMenuItem3 = new JMenuItem("Red");
+        colorsMenuItem4 = new JMenuItem("Purple");
+        colorsMenuItem5 = new JMenuItem("Pink");
+        colorsMenuItem6 = new JMenuItem("Blue");
+        colorsMenuItem7 = new JMenuItem("Green");
+
+        colorsMenu.add(colorsMenuItem1);
+        colorsMenu.add(colorsMenuItem2);
+        colorsMenu.add(colorsMenuItem3);
+        colorsMenu.add(colorsMenuItem4);
+        colorsMenu.add(colorsMenuItem5);
+        colorsMenu.add(colorsMenuItem6);
+        colorsMenu.add(colorsMenuItem7);
+
+        colorsMenuItem1.addActionListener(this);
+        colorsMenuItem2.addActionListener(this);
+        colorsMenuItem3.addActionListener(this);
+        colorsMenuItem4.addActionListener(this);
+        colorsMenuItem5.addActionListener(this);
+        colorsMenuItem6.addActionListener(this);
+        colorsMenuItem7.addActionListener(this);
+
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(toolsMenu);
+        menuBar.add(colorsMenu);
 
         // toolbar
 
@@ -151,6 +199,48 @@ public class Editor implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == colorsMenuItem1) {
+            drawArea.white();
+        }
+        else if (e.getSource() == colorsMenuItem2) {
+            drawArea.black();
+        }
+        else if (e.getSource() == colorsMenuItem3) {
+            drawArea.red();
+        }
+        else if (e.getSource() == colorsMenuItem4) {
+            drawArea.purple();
+        }
+        else if (e.getSource() == colorsMenuItem5) {
+            drawArea.pink();
+        }
+        else if (e.getSource() == colorsMenuItem6) {
+            drawArea.blue();
+        }
+        else if (e.getSource() == colorsMenuItem7) {
+            drawArea.green();
+        }
+        else if (e.getSource() == fileMenuItem1) {
+             drawArea.clear();
+        }
+        else if (e.getSource() == fileMenuItem2) {
+            FileDialog fileDialog = new FileDialog(window, "open", FileDialog.LOAD);
+            fileDialog.setVisible(true);
 
+            String loadPath = fileDialog.getDirectory() + fileDialog.getFile();
+            drawArea.load(loadPath);
+        }
+        else if (e.getSource() == fileMenuItem3) {
+            FileDialog fileDialog = new FileDialog(window, "save", FileDialog.SAVE);
+
+            fileDialog.setFile("Untitled.png");
+            fileDialog.setVisible(true);
+
+            String savePath = fileDialog.getDirectory() + fileDialog.getFile();
+            drawArea.save(savePath);
+        }
+        else if (e.getSource() == fileMenuItem4) {
+            System.exit(0);
+        }
     }
 }

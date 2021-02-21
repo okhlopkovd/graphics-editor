@@ -1,5 +1,6 @@
 package graphicseditor;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import java.awt.Image;
@@ -7,18 +8,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Color;
-import java.awt.BasicStroke;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import graphicseditor.Tool;
-import graphicseditor.Pencil;
-import graphicseditor.Brush;
-import graphicseditor.Rubber;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 
-import graphicseditor.Shape;
+import java.io.File;
+import java.io.IOException;
+
+import graphicseditor.Tool;
 import graphicseditor.Line;
 
 public class DrawingArea extends JComponent{
@@ -32,7 +33,9 @@ public class DrawingArea extends JComponent{
 
     private Shape currentShape;
     private Tool currentTool = new Pencil();
-    private Color currentColor = Color.pink;
+    private Color currentColor = Color.black;
+
+    private BufferedImage buffer;
 
     public DrawingArea() {
         addMouseListener(new MouseAdapter() {
@@ -118,5 +121,61 @@ public class DrawingArea extends JComponent{
     public void circle() {
         shapeMode = true;
         currentShape = new Circle();
+    }
+
+    public void black() {
+        currentColor = Color.black;
+    }
+
+    public void white() {
+        currentColor = Color.white;
+    }
+
+    public void red() {
+        currentColor = Color.red;
+    }
+
+    public void blue() {
+        currentColor = Color.blue;
+    }
+
+    public void pink() {
+        currentColor = Color.pink;
+    }
+
+    public void purple() {
+        currentColor = Color.magenta;
+    }
+
+    public void green() {
+        currentColor = Color.green;
+    }
+
+    public void load(String loadPath) {
+        BufferedImage loadingImage=null;
+
+        try {
+            loadingImage = ImageIO.read(new File(loadPath));
+        }
+        catch (IOException ex) {
+            ex.getLocalizedMessage();
+        }
+
+        graphics.drawImage(loadingImage, 0, 0, null);
+        repaint();
+    }
+
+    public void save(String savePath) {
+        BufferedImage buffer = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D savedGrapics = buffer.createGraphics();
+        savedGrapics.drawImage(image, 0, 0, null);
+
+        try {
+            ImageIO.write(buffer, "PNG", new File(savePath));
+        }
+        catch (IOException ex) {
+            ex.getLocalizedMessage();
+        }
     }
 }

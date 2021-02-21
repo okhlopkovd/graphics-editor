@@ -30,6 +30,7 @@ public class DrawingArea extends JComponent{
     private int oldX, oldY;
 
     private boolean shapeMode = false;
+    private int currentFactor = 1;
 
     private Shape currentShape;
     private Tool currentTool = new Pencil();
@@ -61,7 +62,7 @@ public class DrawingArea extends JComponent{
                     curY = e.getY();
 
                     if (graphics != null) {
-                        currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor);
+                        currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
                         repaint();
 
                         oldX = curX;
@@ -178,4 +179,6 @@ public class DrawingArea extends JComponent{
             ex.getLocalizedMessage();
         }
     }
+
+    public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
 }

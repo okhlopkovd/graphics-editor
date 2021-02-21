@@ -44,6 +44,10 @@ public class Editor implements ActionListener{
     JMenuItem fileMenuItem3;
     JMenuItem fileMenuItem4;
 
+    JMenuItem sizeMenuItem1;
+    JMenuItem sizeMenuItem2;
+    JMenuItem sizeMenuItem3;
+
 
     public Editor(int windowWidth, int windowHeight) {
         // creating a window
@@ -143,10 +147,27 @@ public class Editor implements ActionListener{
         colorsMenuItem6.addActionListener(this);
         colorsMenuItem7.addActionListener(this);
 
+        // size menu
+
+        JMenu sizeMenu = new JMenu("Size");
+
+        sizeMenuItem1 = new JMenuItem("1x");
+        sizeMenuItem2 = new JMenuItem("2x");
+        sizeMenuItem3 = new JMenuItem("3x");
+
+        sizeMenuItem1.addActionListener(this);
+        sizeMenuItem2.addActionListener(this);
+        sizeMenuItem3.addActionListener(this);
+
+        sizeMenu.add(sizeMenuItem1);
+        sizeMenu.add(sizeMenuItem2);
+        sizeMenu.add(sizeMenuItem3);
+
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(toolsMenu);
         menuBar.add(colorsMenu);
+        menuBar.add(sizeMenu);
 
         // toolbar
 
@@ -199,30 +220,14 @@ public class Editor implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == colorsMenuItem1) {
-            drawArea.white();
-        }
-        else if (e.getSource() == colorsMenuItem2) {
-            drawArea.black();
-        }
-        else if (e.getSource() == colorsMenuItem3) {
-            drawArea.red();
-        }
-        else if (e.getSource() == colorsMenuItem4) {
-            drawArea.purple();
-        }
-        else if (e.getSource() == colorsMenuItem5) {
-            drawArea.pink();
-        }
-        else if (e.getSource() == colorsMenuItem6) {
-            drawArea.blue();
-        }
-        else if (e.getSource() == colorsMenuItem7) {
-            drawArea.green();
-        }
-        else if (e.getSource() == fileMenuItem1) {
-             drawArea.clear();
-        }
+        if (e.getSource() == colorsMenuItem1) { drawArea.white(); }
+        else if (e.getSource() == colorsMenuItem2) { drawArea.black(); }
+        else if (e.getSource() == colorsMenuItem3) { drawArea.red(); }
+        else if (e.getSource() == colorsMenuItem4) { drawArea.purple(); }
+        else if (e.getSource() == colorsMenuItem5) { drawArea.pink(); }
+        else if (e.getSource() == colorsMenuItem6) { drawArea.blue(); }
+        else if (e.getSource() == colorsMenuItem7) { drawArea.green(); }
+        else if (e.getSource() == fileMenuItem1) { drawArea.clear(); }
         else if (e.getSource() == fileMenuItem2) {
             FileDialog fileDialog = new FileDialog(window, "open", FileDialog.LOAD);
             fileDialog.setVisible(true);
@@ -239,8 +244,9 @@ public class Editor implements ActionListener{
             String savePath = fileDialog.getDirectory() + fileDialog.getFile();
             drawArea.save(savePath);
         }
-        else if (e.getSource() == fileMenuItem4) {
-            System.exit(0);
-        }
+        else if (e.getSource() == fileMenuItem4) { System.exit(0); }
+        else if (e.getSource() == sizeMenuItem1) { drawArea.setSizeFactor(1); }
+        else if (e.getSource() == sizeMenuItem2) { drawArea.setSizeFactor(2); }
+        else if (e.getSource() == sizeMenuItem3) { drawArea.setSizeFactor(3); }
     }
 }

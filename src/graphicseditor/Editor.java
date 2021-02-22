@@ -2,17 +2,12 @@ package graphicseditor;
 
 import java.awt.FileDialog;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JToolBar;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Container;
 
 import java.io.File;
@@ -53,6 +48,7 @@ public class Editor implements ActionListener{
         // creating a window
 
         window = new JFrame();
+        JPanel testPanel = new JPanel(new BorderLayout());
 
         window.setTitle("Graphics Editor");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,9 +56,14 @@ public class Editor implements ActionListener{
 
         // creating a class for drawing area
 
-        drawArea = new DrawingArea();
+        drawArea = new DrawingArea(windowWidth, windowHeight);
         Container content = window.getContentPane();
+        content.setLayout(new BorderLayout());
+        content.setPreferredSize(new Dimension(windowWidth, windowHeight));
         content.add(drawArea, BorderLayout.CENTER);
+
+        JScrollPane testPane = new JScrollPane(drawArea);
+        window.add(testPane);
 
         // creating a menu
 
@@ -214,6 +215,9 @@ public class Editor implements ActionListener{
         toolbar.add(rectangleButton);
         toolbar.add(circleButton);
 
+        JScrollPane scrollbar = new JScrollPane(drawArea);
+
+        window.add(scrollbar);
         window.add(toolbar, BorderLayout.NORTH);
         window.setJMenuBar(menuBar);
         window.setVisible(true);

@@ -2,19 +2,17 @@ package graphicseditor;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
 
-import java.awt.Image;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Color;
+import java.awt.*;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +20,7 @@ import java.io.IOException;
 import graphicseditor.Tool;
 import graphicseditor.Line;
 
-public class DrawingArea extends JComponent{
+public class DrawingArea extends JPanel{
     private Image image;
     private Graphics2D graphics;
 
@@ -30,6 +28,7 @@ public class DrawingArea extends JComponent{
     private int oldX, oldY;
 
     private boolean shapeMode = false;
+    private double currentScale = 1;
     private int currentFactor = 1;
 
     private Shape currentShape;
@@ -38,7 +37,10 @@ public class DrawingArea extends JComponent{
 
     private BufferedImage buffer;
 
-    public DrawingArea() {
+    public DrawingArea(int preferredWidth, int preferredHeight) {
+        setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+        setLayout(new BorderLayout());
+
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if(!shapeMode) {
@@ -48,7 +50,7 @@ public class DrawingArea extends JComponent{
             }
 
             public void mouseClicked(MouseEvent e) {
-                if(shapeMode) {
+                if (shapeMode) {
                     currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
                     repaint();
                 }
@@ -74,6 +76,8 @@ public class DrawingArea extends JComponent{
     }
 
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         if (image == null) {
             image = createImage(getSize().width, getSize().height);
             graphics = (Graphics2D) image.getGraphics();

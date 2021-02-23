@@ -1,19 +1,19 @@
 package graphicseditor;
 
 import javax.imageio.ImageIO;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
 import java.awt.*;
+import java.awt.event.*;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,37 +21,49 @@ import graphicseditor.Tool;
 import graphicseditor.Line;
 
 public class DrawingArea extends JPanel{
-    private Image image;
+    private BufferedImage image;
     private Graphics2D graphics;
 
     private int curX, curY;
     private int oldX, oldY;
 
+    private int width;
+    private int height;
+
+    private double scale = 1.0;
+    private boolean zoomMode = false;
     private boolean shapeMode = false;
-    private double currentScale = 1;
     private int currentFactor = 1;
 
     private Shape currentShape;
     private Tool currentTool = new Pencil();
     private Color currentColor = Color.black;
 
-    private BufferedImage buffer;
-
     public DrawingArea(int preferredWidth, int preferredHeight) {
-        setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+        width = preferredWidth;
+        height = preferredHeight;
         setLayout(new BorderLayout());
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if(!shapeMode) {
-                    oldX = e.getX();
-                    oldY = e.getY();
+                    oldX = (int)(e.getX()/ scale);
+                    oldY = (int)(e.getY()/ scale);
                 }
             }
 
             public void mouseClicked(MouseEvent e) {
                 if (shapeMode) {
                     currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
+                }
+                else if (zoomMode) {
+                    scale *= 2;
+
+                    if (scale > 4) {
+                        scale = 1;
+                        zoomMode = false;
+                    }
+
                     repaint();
                 }
             }
@@ -60,8 +72,8 @@ public class DrawingArea extends JPanel{
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (!shapeMode) {
-                    curX = e.getX();
-                    curY = e.getY();
+                    curX = (int)(e.getX() / scale);
+                    curY = (int)(e.getY() / scale);
 
                     if (graphics != null) {
                         currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
@@ -79,7 +91,7 @@ public class DrawingArea extends JPanel{
         super.paintComponent(g);
 
         if (image == null) {
-            image = createImage(getSize().width, getSize().height);
+            image = (BufferedImage) createImage(width, height);
             graphics = (Graphics2D) image.getGraphics();
             graphics.setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -88,12 +100,22 @@ public class DrawingArea extends JPanel{
             clear();
         }
 
-        g.drawImage(image, 0, 0, null);
+        if (zoomMode) {
+            g.drawImage(image.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST), 0, 0, null);
+        }
+        else {
+            g.drawImage(image, 0, 0, null);
+        }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension((int)(scale * width), (int)(scale*height));
     }
 
     public void clear() {
         graphics.setPaint(Color.white);
-        graphics.fillRect(0, 0, getSize().width, getSize().height);
+        graphics.fillRect(0, 0, width, height);
         graphics.setPaint(Color.black);
         repaint();
     }
@@ -185,4 +207,6 @@ public class DrawingArea extends JPanel{
     }
 
     public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
+
+    public void setToZoomMode() { zoomMode = true;}
 }

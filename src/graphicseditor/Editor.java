@@ -59,7 +59,6 @@ public class Editor implements ActionListener{
         drawArea = new DrawingArea(windowWidth, windowHeight);
         Container content = window.getContentPane();
         content.setLayout(new BorderLayout());
-        content.setPreferredSize(new Dimension(windowWidth, windowHeight));
         content.add(drawArea, BorderLayout.CENTER);
 
         JScrollPane testPane = new JScrollPane(drawArea);
@@ -198,6 +197,7 @@ public class Editor implements ActionListener{
         lineButton.addActionListener(e -> drawArea.line());
         rectangleButton.addActionListener(e -> drawArea.rectangle());
         circleButton.addActionListener(e -> drawArea.circle());
+        magnifierButton.addActionListener(e -> drawArea.setToZoomMode());
 
         toolbar.add(newButton);
         toolbar.add(openButton);
@@ -215,9 +215,6 @@ public class Editor implements ActionListener{
         toolbar.add(rectangleButton);
         toolbar.add(circleButton);
 
-        JScrollPane scrollbar = new JScrollPane(drawArea);
-
-        window.add(scrollbar);
         window.add(toolbar, BorderLayout.NORTH);
         window.setJMenuBar(menuBar);
         window.setVisible(true);

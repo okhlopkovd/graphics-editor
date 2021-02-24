@@ -23,8 +23,9 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class DrawingArea extends JPanel{
+public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener{
     private BufferedImage image;
+    private BufferedImage buffer;
     private Graphics2D graphics;
 
     private int curX, curY;
@@ -41,13 +42,10 @@ public class DrawingArea extends JPanel{
     private boolean selectionMode = false;
 
     private Shape currentShape;
-    private Point anchor;
 
     private Tool currentTool = new Pencil();
     private Color currentColor = Color.black;
-    private Selector currentSelection;
-
-    private BufferedImage tempImage;
+    private Selector currentSelection = null;
 
     public DrawingArea(int preferredWidth, int preferredHeight) {
         width = preferredWidth;
@@ -55,67 +53,77 @@ public class DrawingArea extends JPanel{
 
         setLayout(new BorderLayout());
 
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                 if (selectionMode) {
-                    anchor = e.getPoint();
-                    currentSelection = new Selector(image, anchor);
-                }
-                else if(!shapeMode) {
-                    oldX = (int)(e.getX()/ scale);
-                    oldY = (int)(e.getY()/ scale);
-                }
-            }
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
 
-            public void mouseClicked(MouseEvent e) {
-                if (shapeMode) {
-                    currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
-                }
-                else if (zoomMode) {
-                    scale *= 2;
+    public void mouseDragged(MouseEvent e) {
+        if (selectionMode) {
+            currentSelection.select(graphics, e.getPoint());
+            repaint();
+        }
+        else if (!shapeMode) {
+            curX = (int)(e.getX() / scale);
+            curY = (int)(e.getY() / scale);
 
-                    if (scale > 4) {
-                        scale = 1;
-                        zoomMode = false;
-                    }
-                }
-
+            if (graphics != null) {
+                currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
                 repaint();
+
+                oldX = curX;
+                oldY = curY;
             }
-
-            public void mouseReleased(MouseEvent e) {
-                if(selectionMode) { currentSelection.reset(graphics); }
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                if (selectionMode) {
-                    currentSelection.select(graphics, e.getPoint());
-                    repaint();
-                }
-                else if (!shapeMode) {
-                    curX = (int)(e.getX() / scale);
-                    curY = (int)(e.getY() / scale);
-
-                    if (graphics != null) {
-                        currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
-                        repaint();
-
-                        oldX = curX;
-                        oldY = curY;
-                    }
-                }
-            }
-        });
+        }
     }
 
-    private BufferedImage deepCopy() {
-        ColorModel cm = image.getColorModel();
-        boolean isAlphaMultiplied = cm.isAlphaPremultiplied();
-        WritableRaster r = image.copyData(null);
-        return new BufferedImage(cm, r, isAlphaMultiplied, null);
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (shapeMode) {
+            currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
+        }
+        else if (zoomMode) {
+            scale *= 2;
+
+            if (scale > 4) {
+                scale = 1;
+                zoomMode = false;
+            }
+        }
+
+        repaint();
     }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (selectionMode) {
+            if (currentSelection == null) {
+                currentSelection = new Selector(image, e.getPoint());
+            }
+            else {
+                currentSelection.updateImage(image);
+                currentSelection.reset(graphics);
+                currentSelection.setAnchorPoint(e.getPoint());
+            }
+        }
+        else if(!shapeMode) {
+            oldX = (int)(e.getX()/ scale);
+            oldY = (int)(e.getY()/ scale);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if(selectionMode) { currentSelection.reset(graphics); }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) { }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent){ }
+
+    @Override
+    public void mouseMoved(MouseEvent mouseEvent) { }
 
 
     protected void paintComponent(Graphics g) {
@@ -193,6 +201,21 @@ public class DrawingArea extends JPanel{
 
     public void setSelectionMode() {
         selectionMode = true;
+    }
+
+    public void copy() {
+        if (selectionMode) {
+            currentSelection.copy(graphics);
+        }
+        selectionMode = false;
+    }
+
+    public void paste() {
+        if (selectionMode) {
+            currentSelection.paste(graphics);
+        }
+        selectionMode = false;
+        repaint();
     }
 
     public void load(String loadPath) {

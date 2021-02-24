@@ -232,6 +232,8 @@ public class Editor implements ActionListener{
         circleButton = new JButton("Circle");
 
         selectionButton.addActionListener(e -> drawArea.setSelectionMode());
+        copyButton.addActionListener(e -> drawArea.copy());
+        pasteButton.addActionListener(e -> drawArea.paste());
 
         pencilButton.addActionListener(e -> drawArea.pen());
         brushButton.addActionListener(e -> drawArea.brush());

@@ -10,7 +10,10 @@ public class Selector {
 
     java.awt.Rectangle currentSelection;
     BufferedImage selectedImage;
-    Point anchorPoint;
+    BufferedImage buffer = null;
+
+    Point anchorPoint = null;
+    Point boundPoint = null ;
 
     Color selectionColor = Color.black;
     BasicStroke selectionStroke = new BasicStroke(1);
@@ -38,10 +41,48 @@ public class Selector {
 
         imageGraphics.drawImage(selectedImage, 0, 0, null);
         imageGraphics.draw(currentSelection);
+
+        this.boundPoint = boundPoint;
     }
-    
+
+    public void copy(Graphics2D imageGraphics) {
+        if (anchorPoint != null && boundPoint != null) {
+            buffer = selectedImage.getSubimage(
+                    (int) Math.min(anchorPoint.x, boundPoint.x),
+                    (int) Math.min(anchorPoint.y, boundPoint.y),
+                    (int) Math.abs(boundPoint.x - anchorPoint.x),
+                    (int) Math.abs(boundPoint.y - anchorPoint.y)
+            );
+        }
+    }
+
+    public void paste(Graphics2D imageGraphics) {
+        if (buffer != null) {
+            imageGraphics.drawImage(buffer,
+                    (int) Math.min(anchorPoint.x, boundPoint.x),
+                    (int) Math.min(anchorPoint.y, boundPoint.y),
+                    (int) Math.abs(boundPoint.x - anchorPoint.x),
+                    (int) Math.abs(boundPoint.y - anchorPoint.y),
+                    null);
+        }
+        else {
+            System.out.println("dasdsadsa");
+        }
+    }
 
     public void reset(Graphics2D imageGraphics) {
         imageGraphics.drawImage(selectedImage, 0, 0, null);
+    }
+
+    public void setAnchorPoint(Point anchorPoint) {
+        this.anchorPoint = anchorPoint;
+    }
+
+    public void updateImage(BufferedImage newImage) {
+        ColorModel newModel = newImage.getColorModel();
+        boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
+        WritableRaster r = newImage.copyData(null);
+
+        this.selectedImage = new BufferedImage(newModel, r, isAlphaMultiplied, null);
     }
 }

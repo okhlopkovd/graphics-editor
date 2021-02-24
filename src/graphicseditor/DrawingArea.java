@@ -10,15 +10,18 @@ import javax.swing.JScrollPane;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
-import graphicseditor.Tool;
-import graphicseditor.Line;
 
 public class DrawingArea extends JPanel{
     private BufferedImage image;
@@ -31,22 +34,34 @@ public class DrawingArea extends JPanel{
     private int height;
 
     private double scale = 1.0;
-    private boolean zoomMode = false;
-    private boolean shapeMode = false;
     private int currentFactor = 1;
 
+    private boolean zoomMode = false;
+    private boolean shapeMode = false;
+    private boolean selectionMode = false;
+
     private Shape currentShape;
+    private Point anchor;
+
     private Tool currentTool = new Pencil();
     private Color currentColor = Color.black;
+    private Selector currentSelection;
+
+    private BufferedImage tempImage;
 
     public DrawingArea(int preferredWidth, int preferredHeight) {
         width = preferredWidth;
         height = preferredHeight;
+
         setLayout(new BorderLayout());
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if(!shapeMode) {
+                 if (selectionMode) {
+                    anchor = e.getPoint();
+                    currentSelection = new Selector(image, anchor);
+                }
+                else if(!shapeMode) {
                     oldX = (int)(e.getX()/ scale);
                     oldY = (int)(e.getY()/ scale);
                 }
@@ -63,15 +78,23 @@ public class DrawingArea extends JPanel{
                         scale = 1;
                         zoomMode = false;
                     }
-
-                    repaint();
                 }
+
+                repaint();
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                if(selectionMode) { currentSelection.reset(graphics); }
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                if (!shapeMode) {
+                if (selectionMode) {
+                    currentSelection.select(graphics, e.getPoint());
+                    repaint();
+                }
+                else if (!shapeMode) {
                     curX = (int)(e.getX() / scale);
                     curY = (int)(e.getY() / scale);
 
@@ -86,6 +109,14 @@ public class DrawingArea extends JPanel{
             }
         });
     }
+
+    private BufferedImage deepCopy() {
+        ColorModel cm = image.getColorModel();
+        boolean isAlphaMultiplied = cm.isAlphaPremultiplied();
+        WritableRaster r = image.copyData(null);
+        return new BufferedImage(cm, r, isAlphaMultiplied, null);
+    }
+
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -123,59 +154,45 @@ public class DrawingArea extends JPanel{
     public void brush() {
         currentTool = new Brush(10);
         shapeMode = false;
+        selectionMode = false;
     }
 
     public void pen() {
         currentTool = new Pencil();
         shapeMode = false;
+        selectionMode = false;
     }
 
     public void rubber() {
         currentTool = new Rubber(10);
         shapeMode = false;
+        selectionMode = false;
     }
 
     public void line() {
         shapeMode = true;
         currentShape = new Line();
+        selectionMode = false;
     }
 
     public void rectangle() {
         shapeMode = true;
-        currentShape = new Rectangle();
+        selectionMode = false;
+        currentShape = new graphicseditor.Rectangle();
     }
 
     public void circle() {
         shapeMode = true;
+        selectionMode = false;
         currentShape = new Circle();
     }
 
-    public void black() {
-        currentColor = Color.black;
+    public void setColor(Color color) {
+        currentColor = color;
     }
 
-    public void white() {
-        currentColor = Color.white;
-    }
-
-    public void red() {
-        currentColor = Color.red;
-    }
-
-    public void blue() {
-        currentColor = Color.blue;
-    }
-
-    public void pink() {
-        currentColor = Color.pink;
-    }
-
-    public void purple() {
-        currentColor = Color.magenta;
-    }
-
-    public void green() {
-        currentColor = Color.green;
+    public void setSelectionMode() {
+        selectionMode = true;
     }
 
     public void load(String loadPath) {

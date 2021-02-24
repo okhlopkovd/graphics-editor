@@ -1,6 +1,7 @@
 package graphicseditor;
 
 import java.awt.FileDialog;
+import java.awt.Color;
 
 import javax.swing.*;
 
@@ -18,6 +19,51 @@ public class Editor implements ActionListener{
     private JFrame window;
     private DrawingArea drawArea;
 
+    private int windowWidth;
+    private int windowHeight;
+
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenu editMenu;
+    private JMenu toolsMenu;
+    private JMenu colorsMenu;
+    private JMenu sizeMenu;
+
+    private JToolBar toolbar;
+
+    JMenuItem newItem;
+    JMenuItem openItem;
+    JMenuItem saveItem;
+    JMenuItem closeItem;
+
+    JMenuItem selectionItem;
+    JMenuItem copyItem;
+    JMenuItem pasteItem;
+
+    JMenuItem pencilItem;
+    JMenuItem brushItem;
+    JMenuItem rubberItem;
+    JMenuItem magnifierItem;
+    JMenuItem lineItem;
+    JMenuItem rectangleItem;
+    JMenuItem circleItem;
+
+    JMenuItem whiteColorItem;
+    JMenuItem blackColorItem;
+    JMenuItem redColorItem;
+    JMenuItem purpleColorItem;
+    JMenuItem pinkColorItem;
+    JMenuItem blueColorItem;
+    JMenuItem greenColorItem;
+
+    JButton newButton;
+    JButton openButton;
+    JButton saveButton;
+
+    JButton selectionButton;
+    JButton copyButton;
+    JButton pasteButton;
+
     JButton pencilButton;
     JButton brushButton;
     JButton rubberButton;
@@ -26,162 +72,156 @@ public class Editor implements ActionListener{
     JButton rectangleButton;
     JButton circleButton;
 
-    JMenuItem colorsMenuItem1;
-    JMenuItem colorsMenuItem2;
-    JMenuItem colorsMenuItem3;
-    JMenuItem colorsMenuItem4;
-    JMenuItem colorsMenuItem5;
-    JMenuItem colorsMenuItem6;
-    JMenuItem colorsMenuItem7;
-
-    JMenuItem fileMenuItem1;
-    JMenuItem fileMenuItem2;
-    JMenuItem fileMenuItem3;
-    JMenuItem fileMenuItem4;
-
-    JMenuItem sizeMenuItem1;
-    JMenuItem sizeMenuItem2;
-    JMenuItem sizeMenuItem3;
+    JMenuItem defaultSizeItem;
+    JMenuItem doubleSizeItem;
+    JMenuItem tripleSizeItem;
 
 
     public Editor(int windowWidth, int windowHeight) {
-        // creating a window
+        this.windowWidth = windowWidth;
+        this.windowHeight = windowHeight;
 
+        createWindow();
+        createMenu();
+
+        createFileMenu();
+        createEditMenu();
+        createToolMenu();
+        createColorMenu();
+        createSizeMenu();
+
+        createToolbar();
+
+        window.setJMenuBar(menuBar);
+        window.setVisible(true);
+    }
+
+    private void createWindow() {
         window = new JFrame();
-        JPanel testPanel = new JPanel(new BorderLayout());
 
         window.setTitle("Graphics Editor");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(windowWidth, windowHeight);
-
-        // creating a class for drawing area
 
         drawArea = new DrawingArea(windowWidth, windowHeight);
         Container content = window.getContentPane();
         content.setLayout(new BorderLayout());
         content.add(drawArea, BorderLayout.CENTER);
 
-        JScrollPane testPane = new JScrollPane(drawArea);
-        window.add(testPane);
+        JScrollPane scrollbar = new JScrollPane(drawArea);
+        window.add(scrollbar);
+    }
 
-        // creating a menu
-
-        JMenuBar menuBar = new JMenuBar();
-
-        // file menu
-
-        JMenu fileMenu = new JMenu("File");
-
-        fileMenuItem1 = new JMenuItem("New");
-        fileMenuItem2 = new JMenuItem("Open");
-        fileMenuItem3 = new JMenuItem("Save");
-        fileMenuItem4 = new JMenuItem("Close");
-
-        fileMenuItem1.addActionListener(this);
-        fileMenuItem2.addActionListener(this);
-        fileMenuItem3.addActionListener(this);
-        fileMenuItem4.addActionListener(this);
-
-        fileMenu.add(fileMenuItem1);
-        fileMenu.add(fileMenuItem2);
-        fileMenu.add(fileMenuItem3);
-        fileMenu.add(fileMenuItem4);
-
-        //  edit menu
-
-        JMenu editMenu = new JMenu("Edit");
-
-        JMenuItem editMenuItem1 = new JMenuItem("Cut");
-        JMenuItem editMenuItem2 = new JMenuItem("Copy");
-        JMenuItem editMenuItem3 = new JMenuItem("Paste");
-
-        editMenu.add(editMenuItem1);
-        editMenu.add(editMenuItem2);
-        editMenu.add(editMenuItem3);
-
-        // tools menu
-
-        JMenu toolsMenu = new JMenu("Tools");
-
-        JMenuItem toolsMenuItem1 = new JMenuItem("Pencil");
-        JMenuItem toolsMenuItem2 = new JMenuItem("Brush");
-        JMenuItem toolsMenuItem3 = new JMenuItem("Rubber");
-        JMenuItem toolsMenuItem4 = new JMenuItem("Magnifier");
-        JMenuItem toolsMenuItem5 = new JMenuItem("Line");
-        JMenuItem toolsMenuItem6 = new JMenuItem("Rectangle");
-        JMenuItem toolsMenuItem7 = new JMenuItem("Circle");
-
-        toolsMenu.add(toolsMenuItem1);
-        toolsMenu.add(toolsMenuItem2);
-        toolsMenu.add(toolsMenuItem3);
-        toolsMenu.add(toolsMenuItem4);
-        toolsMenu.add(toolsMenuItem5);
-        toolsMenu.add(toolsMenuItem6);
-        toolsMenu.add(toolsMenuItem7);
-
-        // colors menu
-
-        JMenu colorsMenu = new JMenu("Colors");
-
-        colorsMenuItem1 = new JMenuItem("White");
-        colorsMenuItem2 = new JMenuItem("Black");
-        colorsMenuItem3 = new JMenuItem("Red");
-        colorsMenuItem4 = new JMenuItem("Purple");
-        colorsMenuItem5 = new JMenuItem("Pink");
-        colorsMenuItem6 = new JMenuItem("Blue");
-        colorsMenuItem7 = new JMenuItem("Green");
-
-        colorsMenu.add(colorsMenuItem1);
-        colorsMenu.add(colorsMenuItem2);
-        colorsMenu.add(colorsMenuItem3);
-        colorsMenu.add(colorsMenuItem4);
-        colorsMenu.add(colorsMenuItem5);
-        colorsMenu.add(colorsMenuItem6);
-        colorsMenu.add(colorsMenuItem7);
-
-        colorsMenuItem1.addActionListener(this);
-        colorsMenuItem2.addActionListener(this);
-        colorsMenuItem3.addActionListener(this);
-        colorsMenuItem4.addActionListener(this);
-        colorsMenuItem5.addActionListener(this);
-        colorsMenuItem6.addActionListener(this);
-        colorsMenuItem7.addActionListener(this);
-
-        // size menu
-
-        JMenu sizeMenu = new JMenu("Size");
-
-        sizeMenuItem1 = new JMenuItem("1x");
-        sizeMenuItem2 = new JMenuItem("2x");
-        sizeMenuItem3 = new JMenuItem("3x");
-
-        sizeMenuItem1.addActionListener(this);
-        sizeMenuItem2.addActionListener(this);
-        sizeMenuItem3.addActionListener(this);
-
-        sizeMenu.add(sizeMenuItem1);
-        sizeMenu.add(sizeMenuItem2);
-        sizeMenu.add(sizeMenuItem3);
+    private void createMenu() {
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu("File");
+        editMenu = new JMenu("Edit");
+        toolsMenu = new JMenu("Tools");
+        colorsMenu = new JMenu("Colors");
+        sizeMenu = new JMenu("Size");
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(toolsMenu);
         menuBar.add(colorsMenu);
         menuBar.add(sizeMenu);
+    }
 
-        // toolbar
+    private void createFileMenu() {
+        newItem = new JMenuItem("New");
+        openItem = new JMenuItem("Open");
+        saveItem = new JMenuItem("Save");
+        closeItem = new JMenuItem("Close");
 
-        JToolBar toolbar = new JToolBar();
+        newItem .addActionListener(this);
+        openItem.addActionListener(this);
+        saveItem.addActionListener(this);
+        closeItem.addActionListener(this);
 
-        // creating buttons for the toolbar
+        fileMenu.add(newItem);
+        fileMenu.add(openItem);
+        fileMenu.add(saveItem);
+        fileMenu.add(closeItem);
+    }
 
-        JButton newButton = new JButton("New");
-        JButton openButton = new JButton("Open");
-        JButton saveButton = new JButton("Save");
+    private void createEditMenu() {
+        selectionItem = new JMenuItem("Selection");
+        copyItem = new JMenuItem("Copy");
+        pasteItem = new JMenuItem("Paste");
 
-        JButton cutButton = new JButton("Cut");
-        JButton copyButton = new JButton("Copy");
-        JButton pasteButton = new JButton("Paste");
+        editMenu.add(selectionItem);
+        editMenu.add(copyItem);
+        editMenu.add(pasteItem);
+    }
+
+    private void createToolMenu() {
+        pencilItem = new JMenuItem("Pencil");
+        brushItem = new JMenuItem("Brush");
+        rubberItem = new JMenuItem("Rubber");
+        magnifierItem = new JMenuItem("Magnifier");
+        lineItem = new JMenuItem("Line");
+        rectangleItem = new JMenuItem("Rectangle");
+        circleItem = new JMenuItem("Circle");
+
+        toolsMenu.add(pencilItem);
+        toolsMenu.add(brushItem);
+        toolsMenu.add(rubberItem);
+        toolsMenu.add(magnifierItem);
+        toolsMenu.add(lineItem);
+        toolsMenu.add(rectangleItem);
+        toolsMenu.add(circleItem);
+    }
+
+    private void createColorMenu() {
+        whiteColorItem = new JMenuItem("White");
+        blackColorItem = new JMenuItem("Black");
+        redColorItem = new JMenuItem("Red");
+        purpleColorItem = new JMenuItem("Purple");
+        pinkColorItem = new JMenuItem("Pink");
+        blueColorItem = new JMenuItem("Blue");
+        greenColorItem = new JMenuItem("Green");
+
+        colorsMenu.add(whiteColorItem);
+        colorsMenu.add(blackColorItem);
+        colorsMenu.add(redColorItem);
+        colorsMenu.add(purpleColorItem);
+        colorsMenu.add(pinkColorItem);
+        colorsMenu.add(blueColorItem);
+        colorsMenu.add(greenColorItem);
+
+        whiteColorItem.addActionListener(this);
+        blackColorItem.addActionListener(this);
+        redColorItem.addActionListener(this);
+        purpleColorItem.addActionListener(this);
+        pinkColorItem.addActionListener(this);
+        blueColorItem.addActionListener(this);
+        greenColorItem.addActionListener(this);
+    }
+
+    private void createSizeMenu() {
+        defaultSizeItem = new JMenuItem("1x");
+        doubleSizeItem = new JMenuItem("2x");
+        tripleSizeItem= new JMenuItem("3x");
+
+        defaultSizeItem.addActionListener(this);
+        doubleSizeItem.addActionListener(this);
+        tripleSizeItem.addActionListener(this);
+
+        sizeMenu.add(defaultSizeItem);
+        sizeMenu.add(doubleSizeItem);
+        sizeMenu.add(tripleSizeItem);
+    }
+
+    private void createToolbar(){
+        toolbar = new JToolBar();
+
+        newButton = new JButton("New");
+        openButton = new JButton("Open");
+        saveButton = new JButton("Save");
+
+        selectionButton = new JButton("Selection");
+        copyButton = new JButton("Copy");
+        pasteButton = new JButton("Paste");
 
         pencilButton = new JButton("Pencil");
         brushButton = new JButton("Brush");
@@ -190,6 +230,8 @@ public class Editor implements ActionListener{
         lineButton = new JButton("Line");
         rectangleButton = new JButton("Rectangle");
         circleButton = new JButton("Circle");
+
+        selectionButton.addActionListener(e -> drawArea.setSelectionMode());
 
         pencilButton.addActionListener(e -> drawArea.pen());
         brushButton.addActionListener(e -> drawArea.brush());
@@ -203,7 +245,7 @@ public class Editor implements ActionListener{
         toolbar.add(openButton);
         toolbar.add(saveButton);
 
-        toolbar.add(cutButton);
+        toolbar.add(selectionButton);
         toolbar.add(copyButton);
         toolbar.add(pasteButton);
 
@@ -216,27 +258,26 @@ public class Editor implements ActionListener{
         toolbar.add(circleButton);
 
         window.add(toolbar, BorderLayout.NORTH);
-        window.setJMenuBar(menuBar);
-        window.setVisible(true);
     }
 
+
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == colorsMenuItem1) { drawArea.white(); }
-        else if (e.getSource() == colorsMenuItem2) { drawArea.black(); }
-        else if (e.getSource() == colorsMenuItem3) { drawArea.red(); }
-        else if (e.getSource() == colorsMenuItem4) { drawArea.purple(); }
-        else if (e.getSource() == colorsMenuItem5) { drawArea.pink(); }
-        else if (e.getSource() == colorsMenuItem6) { drawArea.blue(); }
-        else if (e.getSource() == colorsMenuItem7) { drawArea.green(); }
-        else if (e.getSource() == fileMenuItem1) { drawArea.clear(); }
-        else if (e.getSource() == fileMenuItem2) {
+        if (e.getSource() == whiteColorItem) { drawArea.setColor(Color.white); }
+        else if (e.getSource() == blackColorItem) { drawArea.setColor(Color.black); }
+        else if (e.getSource() == redColorItem) { drawArea.setColor(Color.red); }
+        else if (e.getSource() == purpleColorItem) { drawArea.setColor(Color.magenta); }
+        else if (e.getSource() == pinkColorItem) { drawArea.setColor(Color.pink); }
+        else if (e.getSource() == blueColorItem) { drawArea.setColor(Color.blue); }
+        else if (e.getSource() == greenColorItem) { drawArea.setColor(Color.green); }
+        else if (e.getSource() == newItem) { drawArea.clear(); }
+        else if (e.getSource() == openItem) {
             FileDialog fileDialog = new FileDialog(window, "open", FileDialog.LOAD);
             fileDialog.setVisible(true);
 
             String loadPath = fileDialog.getDirectory() + fileDialog.getFile();
             drawArea.load(loadPath);
         }
-        else if (e.getSource() == fileMenuItem3) {
+        else if (e.getSource() == saveItem) {
             FileDialog fileDialog = new FileDialog(window, "save", FileDialog.SAVE);
 
             fileDialog.setFile("Untitled.png");
@@ -245,9 +286,9 @@ public class Editor implements ActionListener{
             String savePath = fileDialog.getDirectory() + fileDialog.getFile();
             drawArea.save(savePath);
         }
-        else if (e.getSource() == fileMenuItem4) { System.exit(0); }
-        else if (e.getSource() == sizeMenuItem1) { drawArea.setSizeFactor(1); }
-        else if (e.getSource() == sizeMenuItem2) { drawArea.setSizeFactor(2); }
-        else if (e.getSource() == sizeMenuItem3) { drawArea.setSizeFactor(3); }
+        else if (e.getSource() == closeItem) { System.exit(0); }
+        else if (e.getSource() == defaultSizeItem) { drawArea.setSizeFactor(1); }
+        else if (e.getSource() == doubleSizeItem) { drawArea.setSizeFactor(2); }
+        else if (e.getSource() == tripleSizeItem) { drawArea.setSizeFactor(3); }
     }
 }

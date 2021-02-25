@@ -5,6 +5,7 @@ import graphicseditor.Tool;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.image.BufferedImage;
 
 public class Rubber implements Tool{
     private int size;
@@ -19,4 +20,6 @@ public class Rubber implements Tool{
 
         g.drawLine(oldX, oldY, curX, curY);
     }
+
+    public void reset(Graphics2D g, BufferedImage newImage) {}
 }

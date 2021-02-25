@@ -19,13 +19,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+
 import java.io.File;
 import java.io.IOException;
 
 
 public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener{
     private BufferedImage image;
-    private BufferedImage buffer;
     private Graphics2D graphics;
 
     private int curX, curY;
@@ -38,10 +38,8 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     private int currentFactor = 1;
 
     private boolean zoomMode = false;
-    private boolean shapeMode = false;
     private boolean selectionMode = false;
-
-    private Shape currentShape;
+    private boolean textMode = false;
 
     private Tool currentTool = new Pencil();
     private Color currentColor = Color.black;
@@ -62,7 +60,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
             currentSelection.select(graphics, e.getPoint());
             repaint();
         }
-        else if (!shapeMode) {
+        else {
             curX = (int)(e.getX() / scale);
             curY = (int)(e.getY() / scale);
 
@@ -78,10 +76,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (shapeMode) {
-            currentShape.paintShape(graphics, e.getX(), e.getY(), currentColor);
-        }
-        else if (zoomMode) {
+        if (zoomMode) {
             scale *= 2;
 
             if (scale > 4) {
@@ -89,7 +84,6 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
                 zoomMode = false;
             }
         }
-
         repaint();
     }
 
@@ -105,7 +99,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
                 currentSelection.setAnchorPoint(e.getPoint());
             }
         }
-        else if(!shapeMode) {
+        else {
             oldX = (int)(e.getX()/ scale);
             oldY = (int)(e.getY()/ scale);
         }
@@ -113,6 +107,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        currentTool.reset(graphics, image);
         if(selectionMode) { currentSelection.reset(graphics); }
     }
 
@@ -161,38 +156,37 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
     public void brush() {
         currentTool = new Brush(10);
-        shapeMode = false;
+        zoomMode = false;
         selectionMode = false;
     }
 
     public void pen() {
         currentTool = new Pencil();
-        shapeMode = false;
         selectionMode = false;
     }
 
     public void rubber() {
         currentTool = new Rubber(10);
-        shapeMode = false;
+        zoomMode = false;
         selectionMode = false;
     }
 
     public void line() {
-        shapeMode = true;
-        currentShape = new Line();
+        currentTool = new Line(image);
         selectionMode = false;
+        zoomMode = false;
     }
 
     public void rectangle() {
-        shapeMode = true;
         selectionMode = false;
-        currentShape = new graphicseditor.Rectangle();
+        zoomMode = false;
+        currentTool = new graphicseditor.Rectangle(image);
     }
 
     public void circle() {
-        shapeMode = true;
         selectionMode = false;
-        currentShape = new Circle();
+        zoomMode = false;
+        currentTool = new graphicseditor.Circle(image);
     }
 
     public void setColor(Color color) {
@@ -246,7 +240,13 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
+    public void setText() {
+        textMode = true;
+    }
+
     public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
 
     public void setToZoomMode() { zoomMode = true;}
+
+
 }

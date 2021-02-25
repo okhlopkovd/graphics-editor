@@ -1,29 +1,43 @@
 package graphicseditor;
 
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.BasicStroke;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
-import graphicseditor.Shape;
 
+public class Line implements Tool{
+    private Point anchorPoint = null;
+    private BufferedImage prevImage;
 
-public class Line implements Shape{
-    private int clicks = 0;
-    private int x = 0;
-    private int y = 0;
+    private int size = 10;
 
-    public void paintShape(Graphics2D g, int x, int y, Color color) {
-        if(clicks == 0) {
-            this.x = x;
-            this.y = y;
+    public Line(BufferedImage prevImage) {
+        ColorModel prevModel = prevImage.getColorModel();
+        boolean isAlphaMultiplied = prevModel.isAlphaPremultiplied();
+        WritableRaster r = prevImage.copyData(null);
 
-            clicks++;
+        this.prevImage = new BufferedImage(prevModel, r, isAlphaMultiplied, null);
+    }
+
+    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
+        if (anchorPoint == null) {
+            anchorPoint = new Point(oldX, oldY);
         }
-        else {
-            g.setColor(color);
-            g.setStroke(new BasicStroke(10));
-            g.drawLine(this.x, this.y, x, y);
-            clicks = 0;
-        }
+
+        g.setColor(color);
+        g.setStroke(new BasicStroke(size * sizeFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+        g.drawImage(prevImage, 0, 0, null);
+        g.drawLine(anchorPoint.x, anchorPoint.y, curX, curY);
+    }
+
+    public void reset(Graphics2D g, BufferedImage newImage) {
+        ColorModel newModel = newImage.getColorModel();
+        boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
+        WritableRaster r = newImage.copyData(null);
+
+        this.prevImage = new BufferedImage(newModel, r, isAlphaMultiplied, null);
+        this.anchorPoint = null;
     }
 }

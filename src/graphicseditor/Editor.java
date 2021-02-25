@@ -71,6 +71,7 @@ public class Editor implements ActionListener{
     JButton lineButton;
     JButton rectangleButton;
     JButton circleButton;
+    JButton textButton;
 
     JMenuItem defaultSizeItem;
     JMenuItem doubleSizeItem;
@@ -93,6 +94,7 @@ public class Editor implements ActionListener{
         createToolbar();
 
         window.setJMenuBar(menuBar);
+        window.setFocusable(true);
         window.setVisible(true);
     }
 
@@ -133,7 +135,7 @@ public class Editor implements ActionListener{
         saveItem = new JMenuItem("Save");
         closeItem = new JMenuItem("Close");
 
-        newItem .addActionListener(this);
+        newItem.addActionListener(this);
         openItem.addActionListener(this);
         saveItem.addActionListener(this);
         closeItem.addActionListener(this);
@@ -149,6 +151,10 @@ public class Editor implements ActionListener{
         copyItem = new JMenuItem("Copy");
         pasteItem = new JMenuItem("Paste");
 
+        selectionItem.addActionListener(e -> drawArea.setSelectionMode());
+        copyItem.addActionListener(e -> drawArea.copy());
+        pasteItem.addActionListener(e -> drawArea.paste());
+
         editMenu.add(selectionItem);
         editMenu.add(copyItem);
         editMenu.add(pasteItem);
@@ -162,6 +168,14 @@ public class Editor implements ActionListener{
         lineItem = new JMenuItem("Line");
         rectangleItem = new JMenuItem("Rectangle");
         circleItem = new JMenuItem("Circle");
+
+        pencilItem.addActionListener(e -> drawArea.pen());
+        brushItem.addActionListener(e -> drawArea.brush());
+        rubberItem.addActionListener(e -> drawArea.rubber());
+        lineItem.addActionListener(e -> drawArea.line());
+        rectangleItem.addActionListener(e -> drawArea.rectangle());
+        circleItem.addActionListener(e -> drawArea.circle());
+        magnifierItem.addActionListener(e -> drawArea.setToZoomMode());
 
         toolsMenu.add(pencilItem);
         toolsMenu.add(brushItem);
@@ -189,13 +203,13 @@ public class Editor implements ActionListener{
         colorsMenu.add(blueColorItem);
         colorsMenu.add(greenColorItem);
 
-        whiteColorItem.addActionListener(this);
-        blackColorItem.addActionListener(this);
-        redColorItem.addActionListener(this);
-        purpleColorItem.addActionListener(this);
-        pinkColorItem.addActionListener(this);
-        blueColorItem.addActionListener(this);
-        greenColorItem.addActionListener(this);
+        whiteColorItem.addActionListener(e -> drawArea.setColor(Color.white));
+        blackColorItem.addActionListener(e -> drawArea.setColor(Color.black));
+        redColorItem.addActionListener(e -> drawArea.setColor(Color.red));
+        purpleColorItem.addActionListener(e -> drawArea.setColor(Color.magenta));
+        pinkColorItem.addActionListener(e -> drawArea.setColor(Color.pink));
+        blueColorItem.addActionListener(e -> drawArea.setColor(Color.blue));
+        greenColorItem.addActionListener(e -> drawArea.setColor(Color.green));
     }
 
     private void createSizeMenu() {
@@ -203,9 +217,9 @@ public class Editor implements ActionListener{
         doubleSizeItem = new JMenuItem("2x");
         tripleSizeItem= new JMenuItem("3x");
 
-        defaultSizeItem.addActionListener(this);
-        doubleSizeItem.addActionListener(this);
-        tripleSizeItem.addActionListener(this);
+        defaultSizeItem.addActionListener(e -> drawArea.setSizeFactor(1));
+        doubleSizeItem.addActionListener(e -> drawArea.setSizeFactor(2));
+        tripleSizeItem.addActionListener(e -> drawArea.setSizeFactor(3));
 
         sizeMenu.add(defaultSizeItem);
         sizeMenu.add(doubleSizeItem);
@@ -230,6 +244,11 @@ public class Editor implements ActionListener{
         lineButton = new JButton("Line");
         rectangleButton = new JButton("Rectangle");
         circleButton = new JButton("Circle");
+        textButton = new JButton("Text");
+
+        newButton.addActionListener(this);
+        openButton.addActionListener(this);
+        saveButton.addActionListener(this);
 
         selectionButton.addActionListener(e -> drawArea.setSelectionMode());
         copyButton.addActionListener(e -> drawArea.copy());
@@ -242,6 +261,7 @@ public class Editor implements ActionListener{
         rectangleButton.addActionListener(e -> drawArea.rectangle());
         circleButton.addActionListener(e -> drawArea.circle());
         magnifierButton.addActionListener(e -> drawArea.setToZoomMode());
+        textButton.addActionListener(e -> drawArea.setText());
 
         toolbar.add(newButton);
         toolbar.add(openButton);
@@ -259,27 +279,23 @@ public class Editor implements ActionListener{
         toolbar.add(rectangleButton);
         toolbar.add(circleButton);
 
+        toolbar.add(textButton);
         window.add(toolbar, BorderLayout.NORTH);
     }
 
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == whiteColorItem) { drawArea.setColor(Color.white); }
-        else if (e.getSource() == blackColorItem) { drawArea.setColor(Color.black); }
-        else if (e.getSource() == redColorItem) { drawArea.setColor(Color.red); }
-        else if (e.getSource() == purpleColorItem) { drawArea.setColor(Color.magenta); }
-        else if (e.getSource() == pinkColorItem) { drawArea.setColor(Color.pink); }
-        else if (e.getSource() == blueColorItem) { drawArea.setColor(Color.blue); }
-        else if (e.getSource() == greenColorItem) { drawArea.setColor(Color.green); }
-        else if (e.getSource() == newItem) { drawArea.clear(); }
-        else if (e.getSource() == openItem) {
+        if (e.getSource() == newItem || e.getSource() == newButton) {
+            drawArea.clear();
+        }
+        else if (e.getSource() == openItem || e.getSource() == openButton) {
             FileDialog fileDialog = new FileDialog(window, "open", FileDialog.LOAD);
             fileDialog.setVisible(true);
 
             String loadPath = fileDialog.getDirectory() + fileDialog.getFile();
             drawArea.load(loadPath);
         }
-        else if (e.getSource() == saveItem) {
+        else if (e.getSource() == saveItem || e.getSource() == saveButton) {
             FileDialog fileDialog = new FileDialog(window, "save", FileDialog.SAVE);
 
             fileDialog.setFile("Untitled.png");
@@ -288,9 +304,8 @@ public class Editor implements ActionListener{
             String savePath = fileDialog.getDirectory() + fileDialog.getFile();
             drawArea.save(savePath);
         }
-        else if (e.getSource() == closeItem) { System.exit(0); }
-        else if (e.getSource() == defaultSizeItem) { drawArea.setSizeFactor(1); }
-        else if (e.getSource() == doubleSizeItem) { drawArea.setSizeFactor(2); }
-        else if (e.getSource() == tripleSizeItem) { drawArea.setSizeFactor(3); }
+        else if (e.getSource() == closeItem) {
+            System.exit(0);
+        }
     }
 }

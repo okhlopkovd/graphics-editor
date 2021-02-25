@@ -13,10 +13,11 @@ public class Selector {
     BufferedImage buffer = null;
 
     Point anchorPoint = null;
-    Point boundPoint = null ;
+    Point boundPoint = null;
 
     Color selectionColor = Color.black;
     BasicStroke selectionStroke = new BasicStroke(1);
+
 
     public Selector(BufferedImage selectedImage, Point anchorPoint) {
         ColorModel selectedModel = selectedImage.getColorModel();
@@ -58,15 +59,14 @@ public class Selector {
 
     public void paste(Graphics2D imageGraphics) {
         if (buffer != null) {
-            imageGraphics.drawImage(buffer,
+            imageGraphics.drawImage(
+                    buffer,
                     (int) Math.min(anchorPoint.x, boundPoint.x),
                     (int) Math.min(anchorPoint.y, boundPoint.y),
                     (int) Math.abs(boundPoint.x - anchorPoint.x),
                     (int) Math.abs(boundPoint.y - anchorPoint.y),
-                    null);
-        }
-        else {
-            System.out.println("dasdsadsa");
+                    null
+            );
         }
     }
 

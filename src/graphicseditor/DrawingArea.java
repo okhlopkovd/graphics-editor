@@ -1,19 +1,28 @@
 package graphicseditor;
 
-import javax.imageio.ImageIO;
-
-import tools.*;
-
 import javax.swing.JPanel;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.RenderingHints;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyListener;
+
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
-import java.io.File;
+import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.io.File;
 
+import tools.*;
 
 public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener, KeyListener{
     private BufferedImage image;

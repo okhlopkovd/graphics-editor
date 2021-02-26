@@ -1,11 +1,23 @@
 package graphicseditor;
 
-import java.awt.*;
-import tools.*;
-import javax.swing.*;
+import java.awt.Cursor;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FileDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JToolBar;
+import javax.swing.JMenuItem;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+
+import tools.*;
 
 public class Editor implements ActionListener{
     private JFrame window;
@@ -336,7 +348,7 @@ public class Editor implements ActionListener{
             drawArea.setCursor(new Cursor(defaultCursor));
 
             var brushTool = new Brush(10);
-            drawArea.setTool(new Brush(10));
+            drawArea.setTool(brushTool);
 
             drawArea.setSelectionMode(false);
             drawArea.setTextMode(false);

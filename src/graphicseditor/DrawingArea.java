@@ -36,6 +36,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     private Selector currentSelection = null;
     private Text currentText = null;
 
+
     public DrawingArea(int preferredWidth, int preferredHeight) {
         width = preferredWidth;
         height = preferredHeight;
@@ -45,36 +46,30 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
+        curX = (int)(e.getX() / scale);
+        curY = (int)(e.getY() / scale);
+
         if (selectionMode) {
             currentSelection.select(graphics, e.getPoint());
             repaint();
         }
         else if (textMode) {
-            curX = (int)(e.getX() / scale);
-            curY = (int)(e.getY() / scale);
-
             currentText.selectArea(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
             repaint();
-
-            oldX = curX;
-            oldY = curY;
         }
         else {
-            curX = (int)(e.getX() / scale);
-            curY = (int)(e.getY() / scale);
-
             if (graphics != null) {
                 currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
                 repaint();
-
-                oldX = curX;
-                oldY = curY;
             }
         }
+
+        oldX = curX;
+        oldY = curY;
     }
 
     @Override
@@ -87,15 +82,14 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
                 zoomMode = false;
             }
         }
+
         repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         if (selectionMode) {
-            if (currentSelection == null) {
-                currentSelection = new Selector(image, e.getPoint());
-            }
+            if (currentSelection == null) currentSelection = new Selector(image, e.getPoint());
             else {
                 currentSelection.updateImage(image);
                 currentSelection.reset(graphics);
@@ -103,7 +97,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         else if (textMode) {
-            if (currentText == null) {currentText = new Text(image, e.getPoint());}
+            if (currentText == null) currentText = new Text(image, e.getPoint());
             else {
                 currentText.reset(graphics);
                 currentText.updateImage(image);;
@@ -124,33 +118,11 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     }
 
     @Override
-    public void mouseEntered(MouseEvent mouseEvent) { }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent){ }
-
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent) { }
-
-
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        if (image == null) {
-            image = (BufferedImage) createImage(width, height);
-            graphics = (Graphics2D) image.getGraphics();
-            graphics.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON
-            );
-            clear();
-        }
-
-        if (zoomMode) {
-            g.drawImage(image.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST), 0, 0, null);
-        }
-        else {
-            g.drawImage(image, 0, 0, null);
+    public void keyPressed(KeyEvent keyEvent) {
+        char keyChar = keyEvent.getKeyChar();
+        if (textMode && (int) keyChar <= 126 && (int) keyChar >= 32) {
+            currentText.drawText(graphics, keyChar);
+            repaint();
         }
     }
 
@@ -166,81 +138,42 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         repaint();
     }
 
-    public void setZoomMode(boolean isOn) {
-        zoomMode = isOn;
-    }
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-    public void brush() {
-        currentTool = new Brush(10);
-        zoomMode = false;
-        selectionMode = false;
-        setTextMode(false);
-    }
+        if (image == null) {
+            image = (BufferedImage) createImage(width, height);
+            graphics = (Graphics2D) image.getGraphics();
+            graphics.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+            clear();
+        }
 
-    public void pen() {
-        currentTool = new Pencil();
-        selectionMode = false;
-        setTextMode(false);
-    }
-
-    public void rubber() {
-        currentTool = new Rubber(10);
-        zoomMode = false;
-        selectionMode = false;
-        setTextMode(false);
-    }
-
-    public void line() {
-        currentTool = new Line(image);
-        selectionMode = false;
-        zoomMode = false;
-        setTextMode(false);
-    }
-
-    public void rectangle() {
-        selectionMode = false;
-        zoomMode = false;
-        currentTool = new graphicseditor.Rectangle(image);
-        setTextMode(false);
-    }
-
-    public void circle() {
-        selectionMode = false;
-        zoomMode = false;
-        currentTool = new graphicseditor.Circle(image);
-        setTextMode(false);
-    }
-
-    public void setColor(Color color) {
-        currentColor = color;
+        if (zoomMode) {
+            g.drawImage(
+                    image.getScaledInstance((int) (width * scale), (int) (height * scale),
+                    Image.SCALE_FAST), 0, 0, null
+            );
+        }
+        else g.drawImage(image, 0, 0, null);
     }
 
     public void copy() {
-        if (selectionMode) {
-            currentSelection.copy(graphics);
-        }
-        selectionMode = false;
-        setTextMode(false);
+        if (selectionMode) currentSelection.copy(graphics);
     }
 
     public void paste() {
-        if (selectionMode) {
-            currentSelection.paste(graphics);
-        }
-        selectionMode = false;
-        setTextMode(false);
+        if (selectionMode) currentSelection.paste(graphics);
         repaint();
     }
 
     public void load(String loadPath) {
         BufferedImage loadingImage=null;
 
-        try {
-            loadingImage = ImageIO.read(new File(loadPath));
-        }
-        catch (IOException ex) {
-            ex.getLocalizedMessage();
-        }
+        try { loadingImage = ImageIO.read(new File(loadPath)); }
+        catch (IOException ex) { ex.getLocalizedMessage(); }
 
         graphics.drawImage(loadingImage, 0, 0, null);
         repaint();
@@ -252,43 +185,47 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         Graphics2D savedGrapics = buffer.createGraphics();
         savedGrapics.drawImage(image, 0, 0, null);
 
-        try {
-            ImageIO.write(buffer, "PNG", new File(savePath));
-        }
-        catch (IOException ex) {
-            ex.getLocalizedMessage();
-        }
+        try { ImageIO.write(buffer, "PNG", new File(savePath)); }
+        catch (IOException ex) { ex.getLocalizedMessage(); }
     }
+
+    public void brush() { currentTool = new Brush(10); }
+
+    public void pen() { currentTool = new Pencil(); }
+
+    public void rubber() { currentTool = new Rubber(10); }
+
+    public void line() { currentTool = new Line(image); }
+
+    public void rectangle() { currentTool = new graphicseditor.Rectangle(image); }
+
+    public void circle() { currentTool = new graphicseditor.Circle(image); }
 
     public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
 
-    public void setToZoomMode() { zoomMode = true;};
+    public void setColor(Color color) { currentColor = color; }
 
-    public void setSelectionMode() {selectionMode = true;}
+    public void setZoomMode(boolean isOn) { zoomMode = isOn; }
+
+    public void setSelectionMode() { selectionMode = true; }
 
     public void setTextMode(boolean isOn) {
-        if(textMode) {
-            currentText.reset(graphics);
-        }
+        if(textMode && currentText != null) currentText.reset(graphics);
         textMode = isOn;
     }
 
     @Override
-    public void keyTyped(KeyEvent keyEvent) {
-
-    }
+    public void mouseEntered(MouseEvent mouseEvent) { }
 
     @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        char keyChar = keyEvent.getKeyChar();
-        if (textMode && (int) keyChar <= 126 && (int) keyChar >= 32) {
-            currentText.drawText(graphics, keyChar);
-            repaint();
-        }
-    }
+    public void mouseExited(MouseEvent mouseEvent) { }
 
     @Override
-    public void keyReleased(KeyEvent keyEvent) {
+    public void mouseMoved(MouseEvent mouseEvent) { }
 
-    }
+    @Override
+    public void keyTyped(KeyEvent keyEvent) { }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) { }
 }

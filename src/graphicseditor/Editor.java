@@ -1,21 +1,24 @@
 package graphicseditor;
 
-import java.awt.FileDialog;
-import java.awt.Color;
+import java.awt.*;
 
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
-import java.awt.Container;
 
 public class Editor implements ActionListener{
     private JFrame window;
     private DrawingArea drawArea;
 
-    private int windowWidth;
-    private int windowHeight;
+    final private int windowWidth;
+    final private int windowHeight;
+
+    final private int defaultCursor = Cursor.DEFAULT_CURSOR;
+    final private int shapeCursor = Cursor.NE_RESIZE_CURSOR;
+    final private int selectionCursor = Cursor.HAND_CURSOR;
+    final private int magnifierCursor = Cursor.CROSSHAIR_CURSOR;
+    final private int textCursor = Cursor.TEXT_CURSOR;
 
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -42,6 +45,7 @@ public class Editor implements ActionListener{
     JMenuItem lineItem;
     JMenuItem rectangleItem;
     JMenuItem circleItem;
+    JMenuItem textItem;
 
     JMenuItem whiteColorItem;
     JMenuItem blackColorItem;
@@ -149,9 +153,9 @@ public class Editor implements ActionListener{
         copyItem = new JMenuItem("Copy");
         pasteItem = new JMenuItem("Paste");
 
-        selectionItem.addActionListener(e -> drawArea.setSelectionMode());
-        copyItem.addActionListener(e -> drawArea.copy());
-        pasteItem.addActionListener(e -> drawArea.paste());
+        selectionItem.addActionListener(this);
+        copyItem.addActionListener(this);
+        pasteItem.addActionListener(this);
 
         editMenu.add(selectionItem);
         editMenu.add(copyItem);
@@ -166,14 +170,15 @@ public class Editor implements ActionListener{
         lineItem = new JMenuItem("Line");
         rectangleItem = new JMenuItem("Rectangle");
         circleItem = new JMenuItem("Circle");
+        textItem = new JMenuItem("Text");
 
-        pencilItem.addActionListener(e -> drawArea.pen());
-        brushItem.addActionListener(e -> drawArea.brush());
-        rubberItem.addActionListener(e -> drawArea.rubber());
-        lineItem.addActionListener(e -> drawArea.line());
-        rectangleItem.addActionListener(e -> drawArea.rectangle());
-        circleItem.addActionListener(e -> drawArea.circle());
-        magnifierItem.addActionListener(e -> drawArea.setToZoomMode());
+        pencilItem.addActionListener(this);
+        brushItem.addActionListener(this);
+        rubberItem.addActionListener(this);
+        lineItem.addActionListener(this);
+        rectangleItem.addActionListener(this);
+        circleItem.addActionListener(this);
+        magnifierItem.addActionListener(this);
 
         toolsMenu.add(pencilItem);
         toolsMenu.add(brushItem);
@@ -248,18 +253,18 @@ public class Editor implements ActionListener{
         openButton.addActionListener(this);
         saveButton.addActionListener(this);
 
-        selectionButton.addActionListener(e -> drawArea.setSelectionMode());
-        copyButton.addActionListener(e -> drawArea.copy());
-        pasteButton.addActionListener(e -> drawArea.paste());
+        selectionButton.addActionListener(this);
+        copyButton.addActionListener(this);
+        pasteButton.addActionListener(this);
 
-        pencilButton.addActionListener(e -> drawArea.pen());
-        brushButton.addActionListener(e -> drawArea.brush());
-        rubberButton.addActionListener(e -> drawArea.rubber());
-        lineButton.addActionListener(e -> drawArea.line());
-        rectangleButton.addActionListener(e -> drawArea.rectangle());
-        circleButton.addActionListener(e -> drawArea.circle());
-        magnifierButton.addActionListener(e -> drawArea.setToZoomMode());
-        textButton.addActionListener(e -> drawArea.setTextMode(true));
+        pencilButton.addActionListener(this);
+        brushButton.addActionListener(this);
+        rubberButton.addActionListener(this);
+        lineButton.addActionListener(this);
+        rectangleButton.addActionListener(this);
+        circleButton.addActionListener(this);
+        magnifierButton.addActionListener(this);
+        textButton.addActionListener(this);
 
         toolbar.add(newButton);
         toolbar.add(openButton);
@@ -304,6 +309,83 @@ public class Editor implements ActionListener{
         }
         else if (e.getSource() == closeItem) {
             System.exit(0);
+        }
+        else if (e.getSource() == selectionItem || e.getSource() == selectionButton) {
+            drawArea.setCursor(new Cursor(selectionCursor));
+            drawArea.setTextMode(false);
+            drawArea.setSelectionMode(true);
+        }
+        else if (e.getSource() == copyItem || e.getSource() == copyButton) {
+            drawArea.copy();
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == pasteItem || e.getSource() == pasteButton) {
+            drawArea.paste();
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == pencilItem || e.getSource() == pencilButton) {
+            drawArea.setCursor(new Cursor(defaultCursor));
+
+            var pencilTool = new Pencil();
+            drawArea.setTool(pencilTool);
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == brushItem || e.getSource() == brushButton) {
+            drawArea.setCursor(new Cursor(defaultCursor));
+
+            var brushTool = new Brush(10);
+            drawArea.setTool(new Brush(10));
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == rubberItem || e.getSource() == rubberButton) {
+            drawArea.setCursor(new Cursor(defaultCursor));
+
+            var rubberTool = new Rubber(10);
+            drawArea.setTool(rubberTool);
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == magnifierItem || e.getSource() == magnifierButton) {
+            drawArea.setCursor(new Cursor(magnifierCursor));
+            drawArea.setZoomMode(true);
+        }
+        else if (e.getSource() == lineItem || e.getSource() == lineButton) {
+            drawArea.setCursor(new Cursor(shapeCursor));
+
+            var lineTool = new graphicseditor.Line(drawArea.getImage());
+            drawArea.setTool(lineTool);
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == rectangleItem || e.getSource() == rectangleButton) {
+            drawArea.setCursor(new Cursor(shapeCursor));
+
+            var rectangleTool = new graphicseditor.Rectangle(drawArea.getImage());
+            drawArea.setTool(rectangleTool);
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == circleItem || e.getSource() == circleButton) {
+            drawArea.setCursor(new Cursor(shapeCursor));
+
+            var circleTool = new graphicseditor.Circle(drawArea.getImage());
+            drawArea.setTool(circleTool);
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(false);
+        }
+        else if (e.getSource() == textItem || e.getSource() == textButton) {
+            drawArea.setCursor(new Cursor(textCursor));
+
+            drawArea.setSelectionMode(false);
+            drawArea.setTextMode(true);
         }
     }
 }

@@ -21,6 +21,15 @@ public class Rectangle implements Tool{
         this.prevImage = new BufferedImage(prevModel, r, isAlphaMultiplied, null);
     }
 
+    public void reset(Graphics2D g, BufferedImage newImage) {
+        ColorModel newModel = newImage.getColorModel();
+        boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
+        WritableRaster r = newImage.copyData(null);
+
+        this.prevImage = new BufferedImage(newModel, r, isAlphaMultiplied, null);
+        this.anchorPoint = null;
+    }
+
     public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
         if (anchorPoint == null) {
             anchorPoint = new Point(oldX, oldY);
@@ -39,14 +48,5 @@ public class Rectangle implements Tool{
 
         g.drawImage(prevImage, 0, 0, null);
         g.draw(currentRect);
-    }
-
-    public void reset(Graphics2D g, BufferedImage newImage) {
-        ColorModel newModel = newImage.getColorModel();
-        boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
-        WritableRaster r = newImage.copyData(null);
-
-        this.prevImage = new BufferedImage(newModel, r, isAlphaMultiplied, null);
-        this.anchorPoint = null;
     }
 }

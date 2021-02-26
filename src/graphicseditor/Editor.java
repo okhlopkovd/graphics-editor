@@ -8,12 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Container;
-
-import java.io.File;
-
-import graphicseditor.DrawingArea;
 
 public class Editor implements ActionListener{
     private JFrame window;
@@ -106,6 +101,9 @@ public class Editor implements ActionListener{
         window.setSize(windowWidth, windowHeight);
 
         drawArea = new DrawingArea(windowWidth, windowHeight);
+        drawArea.setFocusable(true);
+        drawArea.requestFocus();
+
         Container content = window.getContentPane();
         content.setLayout(new BorderLayout());
         content.add(drawArea, BorderLayout.CENTER);
@@ -261,7 +259,7 @@ public class Editor implements ActionListener{
         rectangleButton.addActionListener(e -> drawArea.rectangle());
         circleButton.addActionListener(e -> drawArea.circle());
         magnifierButton.addActionListener(e -> drawArea.setToZoomMode());
-        textButton.addActionListener(e -> drawArea.setText());
+        textButton.addActionListener(e -> drawArea.setTextMode(true));
 
         toolbar.add(newButton);
         toolbar.add(openButton);

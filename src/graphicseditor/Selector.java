@@ -78,6 +78,10 @@ public class Selector {
         this.anchorPoint = anchorPoint;
     }
 
+    public java.awt.Rectangle getSelection() {
+        return currentSelection;
+    }
+
     public void updateImage(BufferedImage newImage) {
         ColorModel newModel = newImage.getColorModel();
         boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();

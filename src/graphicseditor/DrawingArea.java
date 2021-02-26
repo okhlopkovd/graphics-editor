@@ -2,29 +2,18 @@ package graphicseditor;
 
 import javax.imageio.ImageIO;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-
-import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 
 import java.io.File;
 import java.io.IOException;
 
 
-public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener{
+public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener, KeyListener{
     private BufferedImage image;
     private Graphics2D graphics;
 
@@ -38,12 +27,14 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     private int currentFactor = 1;
 
     private boolean zoomMode = false;
-    private boolean selectionMode = false;
     private boolean textMode = false;
+    private boolean selectionMode = false;
 
     private Tool currentTool = new Pencil();
     private Color currentColor = Color.black;
+
     private Selector currentSelection = null;
+    private Text currentText = null;
 
     public DrawingArea(int preferredWidth, int preferredHeight) {
         width = preferredWidth;
@@ -51,14 +42,26 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
         setLayout(new BorderLayout());
 
+        addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
+
     }
 
     public void mouseDragged(MouseEvent e) {
         if (selectionMode) {
             currentSelection.select(graphics, e.getPoint());
             repaint();
+        }
+        else if (textMode) {
+            curX = (int)(e.getX() / scale);
+            curY = (int)(e.getY() / scale);
+
+            currentText.selectArea(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
+            repaint();
+
+            oldX = curX;
+            oldY = curY;
         }
         else {
             curX = (int)(e.getX() / scale);
@@ -99,6 +102,14 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
                 currentSelection.setAnchorPoint(e.getPoint());
             }
         }
+        else if (textMode) {
+            if (currentText == null) {currentText = new Text(image, e.getPoint());}
+            else {
+                currentText.reset(graphics);
+                currentText.updateImage(image);;
+                currentText.setAnchorPoint(e.getPoint());
+            }
+        }
         else {
             oldX = (int)(e.getX()/ scale);
             oldY = (int)(e.getY()/ scale);
@@ -109,6 +120,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     public void mouseReleased(MouseEvent e) {
         currentTool.reset(graphics, image);
         if(selectionMode) { currentSelection.reset(graphics); }
+        else if (textMode) { requestFocus();}
     }
 
     @Override
@@ -154,47 +166,53 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         repaint();
     }
 
+    public void setZoomMode(boolean isOn) {
+        zoomMode = isOn;
+    }
+
     public void brush() {
         currentTool = new Brush(10);
         zoomMode = false;
         selectionMode = false;
+        setTextMode(false);
     }
 
     public void pen() {
         currentTool = new Pencil();
         selectionMode = false;
+        setTextMode(false);
     }
 
     public void rubber() {
         currentTool = new Rubber(10);
         zoomMode = false;
         selectionMode = false;
+        setTextMode(false);
     }
 
     public void line() {
         currentTool = new Line(image);
         selectionMode = false;
         zoomMode = false;
+        setTextMode(false);
     }
 
     public void rectangle() {
         selectionMode = false;
         zoomMode = false;
         currentTool = new graphicseditor.Rectangle(image);
+        setTextMode(false);
     }
 
     public void circle() {
         selectionMode = false;
         zoomMode = false;
         currentTool = new graphicseditor.Circle(image);
+        setTextMode(false);
     }
 
     public void setColor(Color color) {
         currentColor = color;
-    }
-
-    public void setSelectionMode() {
-        selectionMode = true;
     }
 
     public void copy() {
@@ -202,6 +220,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
             currentSelection.copy(graphics);
         }
         selectionMode = false;
+        setTextMode(false);
     }
 
     public void paste() {
@@ -209,6 +228,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
             currentSelection.paste(graphics);
         }
         selectionMode = false;
+        setTextMode(false);
         repaint();
     }
 
@@ -240,13 +260,35 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    public void setText() {
-        textMode = true;
-    }
-
     public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
 
-    public void setToZoomMode() { zoomMode = true;}
+    public void setToZoomMode() { zoomMode = true;};
 
+    public void setSelectionMode() {selectionMode = true;}
 
+    public void setTextMode(boolean isOn) {
+        if(textMode) {
+            currentText.reset(graphics);
+        }
+        textMode = isOn;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        char keyChar = keyEvent.getKeyChar();
+        if (textMode && (int) keyChar <= 126 && (int) keyChar >= 32) {
+            currentText.drawText(graphics, keyChar);
+            repaint();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+
+    }
 }

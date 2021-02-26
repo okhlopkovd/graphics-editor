@@ -1,16 +1,23 @@
-package graphicseditor;
+package tools;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.BasicStroke;
+
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 
-public class Circle implements Tool{
+
+public class Circle implements Tool {
     private Point anchorPoint = null;
+    private int size = 10;
+
     private BufferedImage prevImage;
     private Ellipse2D currentCircle;
-    private int size = 10;
+
 
     public Circle(BufferedImage prevImage) {
         ColorModel prevModel = prevImage.getColorModel();

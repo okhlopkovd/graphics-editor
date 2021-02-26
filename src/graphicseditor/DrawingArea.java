@@ -2,6 +2,8 @@ package graphicseditor;
 
 import javax.imageio.ImageIO;
 
+import tools.*;
+
 import javax.swing.JPanel;
 
 import java.awt.*;

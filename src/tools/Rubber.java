@@ -1,13 +1,12 @@
-package graphicseditor;
+package tools;
 
-import graphicseditor.Tool;
-
-import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class Rubber implements Tool{
+
+public class Rubber implements Tool {
     private int size;
 
     public Rubber(int size) { this.size = size; }

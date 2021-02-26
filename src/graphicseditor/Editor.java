@@ -1,7 +1,7 @@
 package graphicseditor;
 
 import java.awt.*;
-
+import tools.*;
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -357,7 +357,7 @@ public class Editor implements ActionListener{
         else if (e.getSource() == lineItem || e.getSource() == lineButton) {
             drawArea.setCursor(new Cursor(shapeCursor));
 
-            var lineTool = new graphicseditor.Line(drawArea.getImage());
+            var lineTool = new tools.Line(drawArea.getImage());
             drawArea.setTool(lineTool);
 
             drawArea.setSelectionMode(false);
@@ -366,7 +366,7 @@ public class Editor implements ActionListener{
         else if (e.getSource() == rectangleItem || e.getSource() == rectangleButton) {
             drawArea.setCursor(new Cursor(shapeCursor));
 
-            var rectangleTool = new graphicseditor.Rectangle(drawArea.getImage());
+            var rectangleTool = new tools.Rectangle(drawArea.getImage());
             drawArea.setTool(rectangleTool);
 
             drawArea.setSelectionMode(false);
@@ -375,7 +375,7 @@ public class Editor implements ActionListener{
         else if (e.getSource() == circleItem || e.getSource() == circleButton) {
             drawArea.setCursor(new Cursor(shapeCursor));
 
-            var circleTool = new graphicseditor.Circle(drawArea.getImage());
+            var circleTool = new tools.Circle(drawArea.getImage());
             drawArea.setTool(circleTool);
 
             drawArea.setSelectionMode(false);

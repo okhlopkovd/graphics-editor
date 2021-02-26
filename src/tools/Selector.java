@@ -1,8 +1,11 @@
-package graphicseditor;
+package tools;
 
-import java.awt.*;
-
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 

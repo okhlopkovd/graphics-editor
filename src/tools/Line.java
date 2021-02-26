@@ -1,12 +1,16 @@
-package graphicseditor;
+package tools;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.BasicStroke;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 
 
-public class Line implements Tool{
+public class Line implements Tool {
     private Point anchorPoint = null;
     private BufferedImage prevImage;
 

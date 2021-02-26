@@ -1,7 +1,6 @@
-package graphicseditor;
+package tools;
 
-import java.awt.Graphics2D;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public interface Tool {

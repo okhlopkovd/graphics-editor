@@ -189,17 +189,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         catch (IOException ex) { ex.getLocalizedMessage(); }
     }
 
-    public void brush() { currentTool = new Brush(10); }
-
-    public void pen() { currentTool = new Pencil(); }
-
-    public void rubber() { currentTool = new Rubber(10); }
-
-    public void line() { currentTool = new Line(image); }
-
-    public void rectangle() { currentTool = new graphicseditor.Rectangle(image); }
-
-    public void circle() { currentTool = new graphicseditor.Circle(image); }
+    public void setTool(Tool newTool) { currentTool = newTool; }
 
     public void setSizeFactor(int newFactor) { currentFactor = newFactor; }
 
@@ -207,12 +197,14 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
     public void setZoomMode(boolean isOn) { zoomMode = isOn; }
 
-    public void setSelectionMode() { selectionMode = true; }
+    public void setSelectionMode(boolean isOn) { selectionMode = isOn; }
 
     public void setTextMode(boolean isOn) {
         if(textMode && currentText != null) currentText.reset(graphics);
         textMode = isOn;
     }
+
+    public BufferedImage getImage() { return image; }
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) { }

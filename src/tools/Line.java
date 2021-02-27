@@ -24,19 +24,19 @@ public class Line implements Tool {
         this.prevImage = new BufferedImage(prevModel, r, isAlphaMultiplied, null);
     }
 
-    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
+    public void paint(Graphics2D imageGraphics, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
         if (anchorPoint == null) {
             anchorPoint = new Point(oldX, oldY);
         }
 
-        g.setColor(color);
-        g.setStroke(new BasicStroke(size * sizeFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        imageGraphics.setColor(color);
+        imageGraphics.setStroke(new BasicStroke(size * sizeFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-        g.drawImage(prevImage, 0, 0, null);
-        g.drawLine(anchorPoint.x, anchorPoint.y, curX, curY);
+        imageGraphics.drawImage(prevImage, 0, 0, null);
+        imageGraphics.drawLine(anchorPoint.x, anchorPoint.y, curX, curY);
     }
 
-    public void reset(Graphics2D g, BufferedImage newImage) {
+    public void reset(Graphics2D imageGraphics, BufferedImage newImage) {
         ColorModel newModel = newImage.getColorModel();
         boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
         WritableRaster r = newImage.copyData(null);

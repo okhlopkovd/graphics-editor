@@ -23,23 +23,23 @@ public class Text{
         currentTextBox = new Selector(prevImage, this.anchorPoint);
     }
 
-    public void selectArea(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
-       currentTextBox.select(g, new Point(curX, curY));
+    public void selectArea(Graphics2D imageGraphics, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
+       currentTextBox.select(imageGraphics, new Point(curX, curY));
        boundPoint = new Point(curX, curY);
        maxAmount = Math.abs(boundPoint.x - anchorPoint.x);
     }
 
-    public void drawText(Graphics2D g, char textChar) {
+    public void drawText(Graphics2D imageGraphics, char textChar) {
         currentText += textChar;
 
-        g.setFont(new Font("TimesRoman", Font.PLAIN, Math.abs(anchorPoint.y - boundPoint.y)));
-        FontMetrics textMetrics = g.getFontMetrics();
+        imageGraphics.setFont(new Font("TimesRoman", Font.PLAIN, Math.abs(anchorPoint.y - boundPoint.y)));
+        FontMetrics textMetrics = imageGraphics.getFontMetrics();
 
         currentAmount = textMetrics.stringWidth(currentText);
         int heightOffset = 5;
 
         if (currentAmount < maxAmount) {
-            g.drawString(currentText, Math.min(anchorPoint.x, boundPoint.x), Math.max(anchorPoint.y, boundPoint.y)-heightOffset);
+            imageGraphics.drawString(currentText, Math.min(anchorPoint.x, boundPoint.x), Math.max(anchorPoint.y, boundPoint.y)-heightOffset);
         }
     }
 
@@ -47,11 +47,11 @@ public class Text{
         currentTextBox.updateImage(newImage);
     }
 
-    public void reset(Graphics2D g) {
+    public void reset(Graphics2D imageGraphics) {
         currentText = "";
         java.awt.Rectangle currentSelection = currentTextBox.getSelection();
-        g.setColor(Color.white);
-        g.draw(currentSelection);
+        imageGraphics.setColor(Color.white);
+        imageGraphics.draw(currentSelection);
     }
 
     public void setAnchorPoint(Point newPoint) {

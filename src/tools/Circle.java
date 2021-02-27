@@ -27,13 +27,13 @@ public class Circle implements Tool {
         this.prevImage = new BufferedImage(prevModel, r, isAlphaMultiplied, null);
     }
 
-    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
+    public void paint(Graphics2D imageGraphics, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
         if (anchorPoint == null) {
             anchorPoint = new Point(oldX, oldY);
         }
 
-        g.setColor(color);
-        g.setStroke(new BasicStroke(size * sizeFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        imageGraphics.setColor(color);
+        imageGraphics.setStroke(new BasicStroke(size * sizeFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         currentCircle = new Ellipse2D.Double(
                 (int)Math.min(anchorPoint.x, curX),
@@ -42,11 +42,11 @@ public class Circle implements Tool {
                 (int)Math.abs(curX-anchorPoint.x)
         );
 
-        g.drawImage(prevImage, 0, 0, null);
-        g.draw(currentCircle);
+        imageGraphics.drawImage(prevImage, 0, 0, null);
+        imageGraphics.draw(currentCircle);
     }
 
-    public void reset(Graphics2D g, BufferedImage newImage) {
+    public void reset(Graphics2D imageGraphics, BufferedImage newImage) {
         ColorModel newModel = newImage.getColorModel();
         boolean isAlphaMultiplied = newModel.isAlphaPremultiplied();
         WritableRaster r = newImage.copyData(null);

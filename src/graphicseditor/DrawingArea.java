@@ -26,7 +26,7 @@ import tools.*;
 
 public class DrawingArea extends JPanel implements MouseListener, MouseMotionListener, KeyListener{
     private BufferedImage image;
-    private Graphics2D graphics;
+    private Graphics2D imageGraphics;
 
     private int curX, curY;
     private int oldX, oldY;
@@ -65,16 +65,16 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         curY = (int)(e.getY() / scale);
 
         if (selectionMode) {
-            currentSelection.select(graphics, e.getPoint());
+            currentSelection.select(imageGraphics, e.getPoint());
             repaint();
         }
         else if (textMode) {
-            currentText.selectArea(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
+            currentText.selectArea(imageGraphics, oldX, oldY, curX, curY, currentColor, currentFactor);
             repaint();
         }
         else {
-            if (graphics != null) {
-                currentTool.paint(graphics, oldX, oldY, curX, curY, currentColor, currentFactor);
+            if (imageGraphics != null) {
+                currentTool.paint(imageGraphics, oldX, oldY, curX, curY, currentColor, currentFactor);
                 repaint();
             }
         }
@@ -103,14 +103,14 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
             if (currentSelection == null) currentSelection = new Selector(image, e.getPoint());
             else {
                 currentSelection.updateImage(image);
-                currentSelection.reset(graphics);
+                currentSelection.reset(imageGraphics);
                 currentSelection.setAnchorPoint(e.getPoint());
             }
         }
         else if (textMode) {
             if (currentText == null) currentText = new Text(image, e.getPoint());
             else {
-                currentText.reset(graphics);
+                currentText.reset(imageGraphics);
                 currentText.updateImage(image);;
                 currentText.setAnchorPoint(e.getPoint());
             }
@@ -123,8 +123,8 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        currentTool.reset(graphics, image);
-        if(selectionMode) { currentSelection.reset(graphics); }
+        currentTool.reset(imageGraphics, image);
+        if(selectionMode) { currentSelection.reset(imageGraphics); }
         else if (textMode) { requestFocus();}
     }
 
@@ -132,7 +132,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     public void keyPressed(KeyEvent keyEvent) {
         char keyChar = keyEvent.getKeyChar();
         if (textMode && (int) keyChar <= 126 && (int) keyChar >= 32) {
-            currentText.drawText(graphics, keyChar);
+            currentText.drawText(imageGraphics, keyChar);
             repaint();
         }
     }
@@ -143,9 +143,9 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public void clear() {
-        graphics.setPaint(Color.white);
-        graphics.fillRect(0, 0, width, height);
-        graphics.setPaint(Color.black);
+        imageGraphics.setPaint(Color.white);
+        imageGraphics.fillRect(0, 0, width, height);
+        imageGraphics.setPaint(Color.black);
         repaint();
     }
 
@@ -154,8 +154,8 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
 
         if (image == null) {
             image = (BufferedImage) createImage(width, height);
-            graphics = (Graphics2D) image.getGraphics();
-            graphics.setRenderingHint(
+            imageGraphics = (Graphics2D) image.getGraphics();
+            imageGraphics.setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON
             );
@@ -172,11 +172,11 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public void copy() {
-        if (selectionMode) currentSelection.copy(graphics);
+        if (selectionMode) currentSelection.copy(imageGraphics);
     }
 
     public void paste() {
-        if (selectionMode) currentSelection.paste(graphics);
+        if (selectionMode) currentSelection.paste(imageGraphics);
         repaint();
     }
 
@@ -186,7 +186,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
         try { loadingImage = ImageIO.read(new File(loadPath)); }
         catch (IOException ex) { ex.getLocalizedMessage(); }
 
-        graphics.drawImage(loadingImage, 0, 0, null);
+        imageGraphics.drawImage(loadingImage, 0, 0, null);
         repaint();
     }
 
@@ -211,7 +211,7 @@ public class DrawingArea extends JPanel implements MouseListener, MouseMotionLis
     public void setSelectionMode(boolean isOn) { selectionMode = isOn; }
 
     public void setTextMode(boolean isOn) {
-        if(textMode && currentText != null) currentText.reset(graphics);
+        if(textMode && currentText != null) currentText.reset(imageGraphics);
         textMode = isOn;
     }
 

@@ -10,13 +10,13 @@ public class Brush implements Tool {
 
     public Brush(int size) { this.size = size; }
 
-    public void paint(Graphics2D g, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
+    public void paint(Graphics2D imageGraphics, int oldX, int oldY, int curX, int curY, Color color, int sizeFactor) {
         var brushStroke = new BasicStroke(sizeFactor * size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-        g.setColor(color);
-        g.setStroke(brushStroke);
-        g.drawLine(oldX, oldY, curX, curY);
+        imageGraphics.setColor(color);
+        imageGraphics.setStroke(brushStroke);
+        imageGraphics.drawLine(oldX, oldY, curX, curY);
     }
 
-    public void reset(Graphics2D g, BufferedImage newImage){ }
+    public void reset(Graphics2D imageGraphics, BufferedImage newImage){ }
 }

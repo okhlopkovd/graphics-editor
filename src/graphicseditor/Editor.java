@@ -41,52 +41,52 @@ public class Editor implements ActionListener{
 
     private JToolBar toolbar;
 
-    JMenuItem newItem;
-    JMenuItem openItem;
-    JMenuItem saveItem;
-    JMenuItem closeItem;
+    private JMenuItem newItem;
+    private JMenuItem openItem;
+    private JMenuItem saveItem;
+    private JMenuItem closeItem;
 
-    JMenuItem selectionItem;
-    JMenuItem copyItem;
-    JMenuItem pasteItem;
+    private JMenuItem selectionItem;
+    private JMenuItem copyItem;
+    private JMenuItem pasteItem;
 
-    JMenuItem pencilItem;
-    JMenuItem brushItem;
-    JMenuItem rubberItem;
-    JMenuItem magnifierItem;
-    JMenuItem lineItem;
-    JMenuItem rectangleItem;
-    JMenuItem circleItem;
-    JMenuItem textItem;
+    private JMenuItem pencilItem;
+    private JMenuItem brushItem;
+    private JMenuItem rubberItem;
+    private JMenuItem magnifierItem;
+    private JMenuItem lineItem;
+    private JMenuItem rectangleItem;
+    private JMenuItem circleItem;
+    private JMenuItem textItem;
 
-    JMenuItem whiteColorItem;
-    JMenuItem blackColorItem;
-    JMenuItem redColorItem;
-    JMenuItem purpleColorItem;
-    JMenuItem pinkColorItem;
-    JMenuItem blueColorItem;
-    JMenuItem greenColorItem;
+    private JMenuItem whiteColorItem;
+    private JMenuItem blackColorItem;
+    private JMenuItem redColorItem;
+    private JMenuItem purpleColorItem;
+    private JMenuItem pinkColorItem;
+    private JMenuItem blueColorItem;
+    private JMenuItem greenColorItem;
 
-    JButton newButton;
-    JButton openButton;
-    JButton saveButton;
+    private JButton newButton;
+    private JButton openButton;
+    private JButton saveButton;
 
-    JButton selectionButton;
-    JButton copyButton;
-    JButton pasteButton;
+    private JButton selectionButton;
+    private JButton copyButton;
+    private JButton pasteButton;
 
-    JButton pencilButton;
-    JButton brushButton;
-    JButton rubberButton;
-    JButton magnifierButton;
-    JButton lineButton;
-    JButton rectangleButton;
-    JButton circleButton;
-    JButton textButton;
+    private JButton pencilButton;
+    private JButton brushButton;
+    private JButton rubberButton;
+    private JButton magnifierButton;
+    private JButton lineButton;
+    private JButton rectangleButton;
+    private JButton circleButton;
+    private JButton textButton;
 
-    JMenuItem defaultSizeItem;
-    JMenuItem doubleSizeItem;
-    JMenuItem tripleSizeItem;
+    private JMenuItem defaultSizeItem;
+    private JMenuItem doubleSizeItem;
+    private JMenuItem tripleSizeItem;
 
 
     public Editor(int windowWidth, int windowHeight) {
